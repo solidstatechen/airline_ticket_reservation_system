@@ -31,12 +31,13 @@
 
 {% for line in flights %}
 <table>
-	<th>Time</th>
-	<th>Flight</th>
+	<th>Flight Number</th>
+	<th>Departure Time</th>
+	<th>Arrival Time</th>
 	<tr>
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
-		
+		<td>{{line[2]}}</td>
 	</tr>
 </table>
 {% endfor %}

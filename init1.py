@@ -62,27 +62,35 @@ def registerAuth():
     #grabs information from the forms
     username = request.form['username']
     password = request.form['password']
+    account_type = request.form['radio_answer']
 
 #   if not len(password) >= 4:
 #                flash("Password length must be at least 4 characters")
  #               return redirect(request.url)
 
     #cursor used to send queries
-    cursor = conn.cursor()
-    #executes query
-    query = "SELECT * FROM user WHERE username = \'{}\'"
-    cursor.execute(query.format(username))
-    #stores the results in a variable
-    data = cursor.fetchone()
-    #use fetchall() if you are expecting more than 1 data row
-    error = None
+
+    if account_type is None:
+        error = "Please choose an account type"
+        return render_template('register.html', error = error)
+    else:
+        cursor = conn.cursor()
+        #executes query
+        query = "SELECT * FROM user WHERE username = %s and account_type = %s"
+        cursor.execute(query, (username, account_type))
+        #stores the results in a variable
+        data = cursor.fetchone()
+        #use fetchall() if you are expecting more than 1 data row
+        error = None
+
     if(data):
         #If the previous query returns data, then user exists
         error = "This user already exists"
         return render_template('register.html', error = error)
     else:
-        ins = "INSERT INTO user VALUES(\'{}\', \'{}\')"
-        cursor.execute(ins.format(username, password))
+        session['username'] = username
+        ins = "INSERT INTO user VALUES(\'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(username, password, account_type))
         conn.commit()
         cursor.close()
         flash("You are logged in")
@@ -106,7 +114,7 @@ def search():
         departure_time = request.form['dept_time']
 
         cursor = conn.cursor();
-        query = "SELECT * FROM flight WHERE departure_airport = %s and arrival_airport = %s and departure_time = %s"
+        query = "SELECT flight_num, departure_time, arrival_time FROM flight WHERE departure_airport = %s and arrival_airport = %s and departure_time = %s"
         cursor.execute(query, (departure_airport, arrival_airport, departure_time))
         data = cursor.fetchall() 
         cursor.close()
