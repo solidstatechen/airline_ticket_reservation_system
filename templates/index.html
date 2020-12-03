@@ -7,10 +7,31 @@
 
 <body>
 <h2>Search for flights</h2>
-<form action="/search" method="POST">
+<form action="/search" method="GET">
 	<input type="text" name = "flight" placeholder="flight_num" required/> </br>
 	<input type="submit" value = Search />
 </form>
+
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+
+<table>
+	<th>Time</th>
+	<th>Flight</th>
+
+{% for line in flights %}
+	<tr>
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}</td>
+		
+	</tr>
+{% endfor %}
+</table>
 
 {% with message = get_flashed_messages() %}
 	{% if not message %}
