@@ -11,7 +11,7 @@ app = Flask(__name__)
 conn = mysql.connector.connect(host='localhost',
                        user='root',
                        password='',
-                       database='blog')
+                       database='airline_reservation')
 
 
 #Define a route to hello function
@@ -90,26 +90,26 @@ def registerAuth():
 
 @app.route('/home')
 def home():
-    
     username = session['username']
     cursor = conn.cursor();
-    query = "SELECT ts, blog_post FROM blog WHERE username = \'{}\' ORDER BY ts DESC"
+    query = "SELECT * FROM flight WHERE username = \'{}\' ORDER BY ts DESC"
     cursor.execute(query.format(username))
     data1 = cursor.fetchall() 
     cursor.close()
-    return render_template('home.html', username=username, posts=data1)
+    return render_template('home.html', username=username)
 
-		
-@app.route('/post', methods=['GET', 'POST'])
+	
+@app.route('/search', methods=['GET', 'POST'])
 def post():
 	username = session['username']
 	cursor = conn.cursor();
-	blog = request.form['blog']
-	query = "INSERT INTO blog (blog_post, username) VALUES(\'{}\', \'{}\')"
-	cursor.execute(query.format(blog, username))
+	flight = request.form['flight']
+	query = "SELECT * FROM flight (flight_num, status) VALUES(\'{}\', \'{}\')"
+	cursor.execute(query.format(flight, username))
 	conn.commit()
 	cursor.close()
 	return redirect(url_for('home'))
+
 
 @app.route('/logout')
 def logout():

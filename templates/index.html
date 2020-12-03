@@ -6,6 +6,12 @@
 </head>
 
 <body>
+<h2>Search for flights</h2>
+<form action="/search" method="POST">
+	<input type="text" name = "flight" placeholder="flight_num" required/> </br>
+	<input type="submit" value = Search />
+</form>
+
 {% with message = get_flashed_messages() %}
 	{% if not message %}
 		<a href="/login">Login</a>
