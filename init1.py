@@ -17,12 +17,7 @@ conn = mysql.connector.connect(host='localhost',
 #Define a route to hello function
 @app.route('/')
 def hello():
-    cursor = conn.cursor();
-    query = "SELECT * FROM flight ORDER BY departure_time DESC"
-    cursor.execute(query)
-    data1 = cursor.fetchall() 
-    cursor.close()
-    return render_template('index.html', flights=data1)
+    return render_template('index.html')
 
 #Define route for login
 @app.route('/login')
@@ -95,7 +90,7 @@ def registerAuth():
 
 @app.route('/home')
 def home():
-    cursor = conn.cursor();
+    cursor = conn.cursor()
     query = "SELECT * FROM flight ORDER BY departure_time DESC"
     cursor.execute(query)
     data1 = cursor.fetchall() 
@@ -104,15 +99,23 @@ def home():
 
     
 @app.route('/search', methods=['GET', 'POST'])
-def post():
-    username = session['username']
-    cursor = conn.cursor();
-    flight = request.form['flight']
-    query = "SELECT * FROM flight (flight_num, status) VALUES(\'{}\', \'{}\')"
-    cursor.execute(query.format(flight, username))
-    conn.commit()
-    cursor.close()
-    return redirect(url_for('home'))
+def search():
+    if request.method == 'POST': 
+        departure_airport = request.form['dept_airport']
+        arrival_airport = request.form['arrival_airport']
+        departure_time = request.form['dept_time']
+
+        cursor = conn.cursor();
+        query = "SELECT * FROM flight WHERE departure_airport = %s and arrival_airport = %s and departure_time = %s"
+        cursor.execute(query, (departure_airport, arrival_airport, departure_time))
+        data = cursor.fetchall() 
+        cursor.close()
+        return render_template('index.html', flights=data)
+    else:
+        return render_template('index.html')
+    
+
+    
 
 
 @app.route('/logout')

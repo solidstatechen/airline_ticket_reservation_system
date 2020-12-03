@@ -7,10 +7,17 @@
 
 <body>
 <h2>Search for flights</h2>
-<form action="/search" method="GET">
-	<input type="text" name = "flight" placeholder="flight_num" required/> </br>
+<form action="/search" method="POST">
+	<input type="text" name = "dept_airport" placeholder="departure airport" required/> </br>
+	<input type="text" name = "arrival_airport" placeholder="arrival airport" required/> </br>
+	<input type="text" name = "dept_time" placeholder="departure time" required/> </br>
 	<input type="submit" value = Search />
+
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
 </form>
+
 
 
 <style type="text/css">
@@ -20,18 +27,20 @@
 </style>
 
 
+
+
+{% for line in flights %}
 <table>
 	<th>Time</th>
 	<th>Flight</th>
-
-{% for line in flights %}
 	<tr>
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
 		
 	</tr>
-{% endfor %}
 </table>
+{% endfor %}
+
 
 {% with message = get_flashed_messages() %}
 	{% if not message %}
