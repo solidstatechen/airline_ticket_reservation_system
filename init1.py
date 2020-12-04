@@ -114,7 +114,7 @@ def home():
     
     elif account_type == 'booking_agent':
         page_to_render = 'booking_home_page.html'
-        query = "SELECT * FROM flight WHERE flight.status = 'upcoming' and "
+        query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
 
     elif account_type == 'airline_staff':
         page_to_render = 'staff_home_page.html'
@@ -128,7 +128,7 @@ def home():
 
 @app.route('/cus_register', methods=['GET', 'POST'])
 def cus_register():
-    #inserts details from page into database
+    #inserts details from customer_register into database
     username = session['username']
     password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
     session['password'] = ''
@@ -154,7 +154,7 @@ def cus_register():
 
 @app.route('/staff_register', methods=['GET', 'POST'])
 def staff_register():
-    #inserts details from page into database
+    #inserts details from staff_register into database
     username = session['username']
     password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
     session['password'] = ''
@@ -173,13 +173,16 @@ def staff_register():
 
 @app.route('/booking_register', methods=['GET', 'POST'])
 def booking_register():
-    #inserts details from page into database
+    #inserts details from booking_register into database
     username = session['username']
-    account_type = session['account_type']
+    password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
+    session['password'] = ''
+    booking_ID = request.form['bookingID']
+
     cursor = conn.cursor()
-    query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
-    cursor.execute(query)
-    data1 = cursor.fetchall() 
+    ins = "INSERT INTO booking_agent VALUES(\'{}\', md5(\'{}\'), \'{}\')"
+    cursor.execute(ins.format(username, password, booking_ID))
+    conn.commit()   
     cursor.close()
     #then calls /home to get the new users homepage
     return redirect(url_for('home'))
