@@ -110,21 +110,33 @@ def home():
     cursor = conn.cursor()
     if account_type == 'customer':
         page_to_render = 'user_home_page.html'
-        query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
-    
+        query_purchased_flights = "SELECT * FROM flight, purchases, ticket WHERE flight.status = 'upcoming' AND purchases.customer_email = \'{}\' AND purchases.ticket_id = ticket.ticket_id"
+        cursor.execute(query_purchased_flights.format(username))
+        data1 = cursor.fetchall() 
+        
+        query_all_flights= "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+        cursor.execute(query_all_flights)
+        data2 = cursor.fetchall()
+
     elif account_type == 'booking_agent':
         page_to_render = 'booking_home_page.html'
         query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+        cursor.execute(query)
+        data1 = cursor.fetchall() 
+
 
     elif account_type == 'airline_staff':
         page_to_render = 'staff_home_page.html'
         query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+        cursor.execute(query)
+        data1 = cursor.fetchall() 
 
-    cursor.execute(query)
-    data1 = cursor.fetchall() 
+
+    
+
     cursor.close()
 
-    return render_template(page_to_render, username=username, flights=data1, account_type=account_type)
+    return render_template(page_to_render, username=username, purchased_flights=data1, all_flights=data2, account_type=account_type)
 
 @app.route('/cus_register', methods=['GET', 'POST'])
 def cus_register():

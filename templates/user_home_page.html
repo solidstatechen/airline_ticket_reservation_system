@@ -18,14 +18,58 @@
 
 <h3>Upcoming Purchased Flights</h3>
 <table>
-	<th>Time</th>
-	<th>Flight</th>
-
-{% for line in flights %}
+	<th>Airline</th>
+	<th>Flight Num</th>
+	<th>Deptarture Airport</th>
+	<th>Deptarture Time</th>
+	<th>Arrival Airport</th>
+	<th>Arrival Time</th>
+	<th>Status</th>
+{% for line in purchased_flights %}
 	<tr>
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
-		
+		<td>{{line[2]}}</td>
+		<td>{{line[3]}}</td>
+		<td>{{line[4]}}</td>
+		<td>{{line[5]}}</td>
+		<td>{{line[7]}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+<h2>Search for flights</h2>
+<form action="/search" method="POST">
+	<input type="text" name = "dept_airport" placeholder="departure airport" required/> </br>
+	<input type="text" name = "arrival_airport" placeholder="arrival airport" required/> </br>
+	<input type="text" name = "dept_time" placeholder="departure time" required/> </br>
+	<input type="submit" value = Search />
+
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+
+<h3>All Upcoming Flights</h3>
+<table>
+	<th>Airline</th>
+	<th>Flight Num</th>
+	<th>Deptarture Airport</th>
+	<th>Deptarture Time</th>
+	<th>Arrival Airport</th>
+	<th>Arrival Time</th>
+	<th>Status</th>
+{% for line in all_flights %}
+	<tr>
+		<a href="/purchase">
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}</td>
+		<td>{{line[2]}}</td>
+		<td>{{line[3]}}</td>
+		<td>{{line[4]}}</td>
+		<td>{{line[5]}}</td>
+		<td>{{line[7]}}</td>
+		</a>
 	</tr>
 {% endfor %}
 </table>
