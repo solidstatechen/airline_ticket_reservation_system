@@ -39,7 +39,7 @@ def loginAuth():
     #cursor used to send queries
     cursor = conn.cursor()
     #executes query
-    query = "SELECT * FROM user WHERE username = \'{}\' and password = \'{}\'"
+    query = "SELECT * FROM user WHERE username = \'{}\' and password = md5(\'{}\')"
     cursor.execute(query.format(username, password))
     #stores the results in a variable
     data = cursor.fetchone()
@@ -70,40 +70,37 @@ def registerAuth():
 
     #cursor used to send queries
 
-    if account_type is None:
-        error = "Please choose an account type"
-        return render_template('register.html', error = error)
-    else:
-        cursor = conn.cursor()
-        #executes query
-        query = "SELECT * FROM user WHERE username = %s and account_type = %s"
-        cursor.execute(query, (username, account_type))
-        #stores the results in a variable
-        data = cursor.fetchone()
-        #use fetchall() if you are expecting more than 1 data row
-        error = None
+    cursor = conn.cursor()
+    #executes query
+    query = "SELECT * FROM user WHERE username = \'{}\'" # removed account_type check as username is primary key anyway
+    cursor.execute(query.format(username))
+    #stores the results in a variable
+    data = cursor.fetchone()
+    #use fetchall() if you are expecting more than 1 data row
+    error = None
 
     if(data):
         #If the previous query returns data, then user exists
         error = "This user already exists"
         return render_template('register.html', error = error)
     else:
-        session['username'] = username
-        ins = "INSERT INTO user VALUES(\'{}\', \'{}\', \'{}\')"
+        ins = "INSERT INTO user VALUES(\'{}\', md5(\'{}\'), \'{}\')"
         cursor.execute(ins.format(username, password, account_type))
         conn.commit()
         cursor.close()
-        flash("You are logged in")
-        return render_template('index.html')
+        #flash("You are logged in") #additional functionality see comments in index.hmtl
+        session['username'] = username
+        return redirect(url_for('home'))
 
 @app.route('/home')
 def home():
+    username = session['username']
     cursor = conn.cursor()
     query = "SELECT * FROM flight ORDER BY departure_time DESC"
     cursor.execute(query)
     data1 = cursor.fetchall() 
     cursor.close()
-    return render_template('home.html', flights=data1)
+    return render_template('home.html', username=username, flights=data1)
 
     
 @app.route('/search', methods=['GET', 'POST'])

@@ -11,7 +11,7 @@ INSERT into flight VALUES('China Eastern',23452,'JFK', '020-12-02 12:00', 'PVG',
 INSERT into flight VALUES('China Eastern',53423, 'JFK', '020-12-05 07:00','PVG', '2020-12-05 12:05', 500.00,'in-progress','9837');
 INSERT into flight VALUES('China Eastern',23435, 'JFK', '020-12-11 11:00', 'PVG','2020-12-11 14:25', 100.00, 'delayed','1253');
 INSERT into ticket VALUES( 23452,'China Eastern',23435);
-INSERT into purchases VALUES(23435"ben_ol87@gmail.com","agent@booking.com", '2020-03-10');
+INSERT into purchases VALUES(23435,"ben_ol87@gmail.com","agent@booking.com", '2020-03-10');
 INSERT into ticket VALUES(57984,'China Eastern',53423);
 INSERT into purchases VALUES(57984,NULL,"Simonsays@gmail.com", '2020-03-10')
 
