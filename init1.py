@@ -50,6 +50,7 @@ def loginAuth():
         #creates a session for the the user
         #session is a built in
         session['username'] = username
+        session['account_type'] = data[2] #data[2] is the account_type :)
         return redirect(url_for('home'))
     else:
         #returns an error message to the html page
@@ -90,17 +91,27 @@ def registerAuth():
         cursor.close()
         #flash("You are logged in") #additional functionality see comments in index.hmtl
         session['username'] = username
+        session['account_type'] = account_type 
         return redirect(url_for('home'))
 
 @app.route('/home')
 def home():
     username = session['username']
+    account_type = session['account_type']
     cursor = conn.cursor()
     query = "SELECT * FROM flight ORDER BY departure_time DESC"
     cursor.execute(query)
     data1 = cursor.fetchall() 
     cursor.close()
-    return render_template('home.html', username=username, flights=data1)
+
+    if account_type == 'customer':
+        page_to_render = 'user_home_page.html'
+    elif account_type == 'booking_agent':
+        page_to_render = 'booking_home_page.html'
+    elif account_type == 'airline_staff':
+        page_to_render = 'staff_home_page.html'
+
+    return render_template(page_to_render, username=username, flights=data1, account_type=account_type)
 
     
 @app.route('/search', methods=['GET', 'POST'])
@@ -118,8 +129,6 @@ def search():
         return render_template('index.html', flights=data)
     else:
         return render_template('index.html')
-    
-
     
 
 
