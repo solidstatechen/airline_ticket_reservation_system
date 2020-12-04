@@ -4,8 +4,14 @@
 <body>
 <h2>Staff details</h2>
 <form action="/staff_register" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
+	<label>First name</label>
+	<input type="text" name = "first_name" required/> </br>
+	<label>Last name</label>
+	<input type="text" name = "last_name"  required/></br>
+	<label>Date of birth</label>
+	<input type="date" name = "dob" required/> </br>
+	<label>Airline</label>
+	<input type="text" name = "airline_name" required/> </br>
 	<input type="submit" value = Register />
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
@@ -14,3 +20,4 @@
 <a href="/">Go back</a>
 </body>
 </html>
+

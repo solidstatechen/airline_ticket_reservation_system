@@ -156,11 +156,17 @@ def cus_register():
 def staff_register():
     #inserts details from page into database
     username = session['username']
-    account_type = session['account_type']
+    password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
+    session['password'] = ''
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    dob = request.form['dob']
+    airline_name = request.form['airline_name']
+    
     cursor = conn.cursor()
-    query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
-    cursor.execute(query)
-    data1 = cursor.fetchall() 
+    ins = "INSERT INTO airline_staff VALUES(\'{}\', md5(\'{}\'), \'{}\',\'{}\', \'{}\', \'{}\')"
+    cursor.execute(ins.format(username, password, first_name, last_name, dob, airline_name))
+    conn.commit()   
     cursor.close()
     #then calls /home to get the new users homepage
     return redirect(url_for('home'))
