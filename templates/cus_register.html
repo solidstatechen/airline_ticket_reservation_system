@@ -1,0 +1,34 @@
+<html>
+<head>
+</head>
+<body>
+<h2>Customer details</h2>
+<form action="/cus_register" method="POST">
+	<label>full name</label>
+	<input type="text" name = "name" required/> </br>
+	<label>Building Number</label>
+	<input type="text" name = "building_num"  required/></br>
+	<label>Street</label>
+	<input type="text" name = "street" required/> </br>
+	<label>City</label>
+	<input type="text" name = "city" required/> </br>
+	<label>State</label>
+	<input type="text" name = "state" required/> </br>
+	<label>Phone Number</label>
+	<input type="number" name = "phone_num" required/> </br>
+	<label>Passport Number</label>
+	<input type="number" name = "pass_num" required/> </br>
+	<label>Passport Expiration Date</label>
+	<input type="date" name = "pass_exp"  required/> </br>
+	<label>Passport Country</label>
+	<input type="text" name = "pass_country" required/> </br>
+	<label>Date of Birth</label>
+	<input type="date" name = "dob"  required/> </br>
+	<input type="submit" value = Register />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+<a href="/">Go back</a>
+</body>
+</html>

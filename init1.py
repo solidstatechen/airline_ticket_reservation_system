@@ -92,26 +92,91 @@ def registerAuth():
         #flash("You are logged in") #additional functionality see comments in index.hmtl
         session['username'] = username
         session['account_type'] = account_type 
-        return redirect(url_for('home'))
+        session['password'] = password
+
+        if account_type == 'customer':
+            url_for = 'cus_register.html'
+        elif account_type == 'booking_agent':
+            url_for = 'booking_register.html'
+        elif account_type == 'airline_staff':
+            url_for = 'staff_register.html'
+
+        return render_template(url_for, username = username, account_type = account_type)
 
 @app.route('/home')
 def home():
     username = session['username']
     account_type = session['account_type']
     cursor = conn.cursor()
-    query = "SELECT * FROM flight ORDER BY departure_time DESC"
+    if account_type == 'customer':
+        page_to_render = 'user_home_page.html'
+        query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+    
+    elif account_type == 'booking_agent':
+        page_to_render = 'booking_home_page.html'
+        query = "SELECT * FROM flight WHERE flight.status = 'upcoming' and "
+
+    elif account_type == 'airline_staff':
+        page_to_render = 'staff_home_page.html'
+        query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+
     cursor.execute(query)
     data1 = cursor.fetchall() 
     cursor.close()
 
-    if account_type == 'customer':
-        page_to_render = 'user_home_page.html'
-    elif account_type == 'booking_agent':
-        page_to_render = 'booking_home_page.html'
-    elif account_type == 'airline_staff':
-        page_to_render = 'staff_home_page.html'
-
     return render_template(page_to_render, username=username, flights=data1, account_type=account_type)
+
+@app.route('/cus_register', methods=['GET', 'POST'])
+def cus_register():
+    #inserts details from page into database
+    username = session['username']
+    password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
+    session['password'] = ''
+    account_type = session['account_type']
+    name = request.form['name']
+    building_num = request.form['building_num']
+    street = request.form['street']
+    city = request.form['city']
+    state = request.form['state']
+    phone_num = request.form['phone_num']
+    pass_num = request.form['pass_num']
+    pass_exp = request.form['pass_exp']
+    pass_country = request.form['pass_country']
+    dob = request.form['dob']
+
+    cursor = conn.cursor()
+    ins = "INSERT INTO customer VALUES(\'{}\',\'{}\', md5(\'{}\'), \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+    cursor.execute(ins.format(username, name, password, building_num, street, city, state, phone_num, pass_num,pass_exp,pass_country,dob))
+    conn.commit()   
+    cursor.close()
+    #then calls /home to get the new users homepage
+    return redirect(url_for('home'))
+
+@app.route('/staff_register', methods=['GET', 'POST'])
+def staff_register():
+    #inserts details from page into database
+    username = session['username']
+    account_type = session['account_type']
+    cursor = conn.cursor()
+    query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+    cursor.execute(query)
+    data1 = cursor.fetchall() 
+    cursor.close()
+    #then calls /home to get the new users homepage
+    return redirect(url_for('home'))
+
+@app.route('/booking_register', methods=['GET', 'POST'])
+def booking_register():
+    #inserts details from page into database
+    username = session['username']
+    account_type = session['account_type']
+    cursor = conn.cursor()
+    query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+    cursor.execute(query)
+    data1 = cursor.fetchall() 
+    cursor.close()
+    #then calls /home to get the new users homepage
+    return redirect(url_for('home'))
 
     
 @app.route('/search', methods=['GET', 'POST'])
