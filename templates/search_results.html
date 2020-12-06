@@ -11,14 +11,19 @@
 	}
 </style>
 <h3>Found Flights</h3>
-<form action="/purchase_flight" method="POST">
+{% for line in flights %}
+
 	<table>
-		<th>Time</th>
-		<th>Flight</th>
-
-	{% for line in flights %}
-
+		<th>Airline</th>
+		<th>Flight Num</th>
+		<th>Deptarture Airport</th>
+		<th>Deptarture Time</th>
+		<th>Arrival Airport</th>
+		<th>Arrival Time</th>
+		<th>Price</th>
+		<th>Status</th>
 		<tr>
+			<form action="/purchase_flight" method="POST">
 			<td>{{line[0]}}</td>
 			<input type="hidden" name="flight_num" value ={{line[1]}}/>
 			<td>{{line[1]}}</td>
@@ -30,12 +35,12 @@
 			<input type="hidden" name="flight_price" value ={{line[6]}}/>
 			<td>{{line[7]}}</td>
 			<td><input type="submit" value ="Purchase"/></td>
-			</a>
+			</form>
 		</tr>
 	{% endfor %}
 	</table>
 	
-</form>
+
 <a href="/home">Go back</a>
 <a href="/logout">Logout</a>
 </body>

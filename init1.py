@@ -211,16 +211,57 @@ def search():
         departure_time = request.form['dept_time']
 
         cursor = conn.cursor();
-        query = "SELECT flight_num, departure_time, arrival_time FROM flight WHERE departure_airport = %s and arrival_airport = %s and departure_time = %s"
-        cursor.execute(query, (departure_airport, arrival_airport, departure_time))
+        query = "SELECT flight_num, departure_time, arrival_time FROM flight"
+        if departure_airport !='':
+            query+= " where departure_airport = '%s'" %departure_airport
+
+        if arrival_airport !='' and departure_airport =='':
+            query += " where arrival_airport = '%s'" % arrival_airport
+        elif arrival_airport !='' :
+            query += " and arrival_airport = '%s'" %arrival_airport
+
+        if departure_time != '' and (departure_airport =='' and arrival_airport ==''):
+            query += ' where departure_time = "%s"' %departure_time
+        elif departure_time != '':
+            query += ' and departure_time = "%s"' %departure_time
+        
+        cursor.execute(query)
         data = cursor.fetchall() 
         cursor.close()
         return render_template('index.html', flights=data)
     else:
         return render_template('index.html')
+
     
 @app.route('/user_search', methods=['GET', 'POST'])
 def user_search():
+    if request.method == 'POST': 
+        departure_airport = request.form['dept_airport']
+        arrival_airport = request.form['arrival_airport']
+        departure_time = request.form['dept_time']
+
+        cursor = conn.cursor();
+        query = "SELECT * FROM flight"
+        if departure_airport !='':
+            query+= " where departure_airport = '%s'" %departure_airport
+
+        if arrival_airport !='' and departure_airport =='':
+            query += " where arrival_airport = '%s'" % arrival_airport
+        elif arrival_airport !='' :
+            query += " and arrival_airport = '%s'" %arrival_airport
+
+        if departure_time != '' and (departure_airport =='' and arrival_airport ==''):
+            query += ' where departure_time = "%s"' %departure_time
+        elif departure_time != '':
+            query += ' and departure_time = "%s"' %departure_time
+        
+        cursor.execute(query)
+        data = cursor.fetchall() 
+        cursor.close()
+        return render_template('search_results.html', flights=data)
+    else:
+        return render_template('index.html')
+    '''
     if request.method == 'POST': 
         #get input from form 
         departure_airport = request.form['dept_airport']
@@ -233,6 +274,7 @@ def user_search():
         data = cursor.fetchall() 
         cursor.close()
         return render_template('search_results.html', flights=data)
+        '''
 
 @app.route('/purchase_flight', methods=['GET', 'POST'])
 def purchase_flight():

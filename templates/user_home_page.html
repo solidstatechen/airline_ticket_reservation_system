@@ -47,9 +47,9 @@
 
 <h2>Search for flights</h2>
 <form action="/user_search" method="POST">
-	<input type="text" name = "dept_airport" placeholder="departure airport" required/> </br>
-	<input type="text" name = "arrival_airport" placeholder="arrival airport" required/> </br>
-	<input type="text" name = "dept_time" placeholder="departure time" required/> </br>
+	<input type="text" name = "dept_airport" placeholder="departure airport" value=""/> </br>
+	<input type="text" name = "arrival_airport" placeholder="arrival airport" value=""/> </br>
+	<input type="text" name = "dept_time" placeholder="departure time" value=""/> </br>
 	<input type="submit" value = Search />
 
 	{% if error %}
@@ -57,7 +57,7 @@
 	{% endif %}
 </form>
 
-<h3>Upcoming Flights</h3>
+<h3>All Upcoming Flights</h3>
 <table>
 	<th>Airline</th>
 	<th>Flight Num</th>
@@ -74,7 +74,7 @@
 		<td>{{line[3]}}</td>
 		<td>{{line[4]}}</td>
 		<td>{{line[5]}}</td>
-		<td><a href="/purchase">{{line[7]}}</a></td>
+		<td>{{line[7]}}</td>
 		</a>
 	</tr>
 {% endfor %}
