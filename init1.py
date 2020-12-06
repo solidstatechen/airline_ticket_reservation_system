@@ -3,7 +3,7 @@
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import mysql.connector
-
+from datetime import datetime
 #Initialize the app from Flask
 app = Flask(__name__)
 
@@ -94,6 +94,7 @@ def registerAuth():
         session['account_type'] = account_type 
         session['password'] = password
 
+
         if account_type == 'customer':
             url_for = 'cus_register.html'
         elif account_type == 'booking_agent':
@@ -110,13 +111,18 @@ def home():
     cursor = conn.cursor()
     if account_type == 'customer':
         page_to_render = 'user_home_page.html'
-        query_purchased_flights = "SELECT * FROM flight, purchases, ticket WHERE flight.status = 'upcoming' AND purchases.customer_email = \'{}\' AND purchases.ticket_id = ticket.ticket_id"
+        query_purchased_flights = "SELECT * FROM flight, purchases, ticket WHERE purchases.customer_email = \'{}\' AND purchases.ticket_id = ticket.ticket_id AND ticket.flight_num = flight.flight_num"
         cursor.execute(query_purchased_flights.format(username))
         data1 = cursor.fetchall() 
-        
+
+        #FOR SOME REASON NOT ALL UPCOMING FLIGHTS ARE DISPLAYED UPON SIGN IN
+        #---------------------------------------------------------------------
+        #SEEMS TO BE WORKING NOW???!!!
+
         query_all_flights= "SELECT * FROM flight WHERE flight.status = 'upcoming'"
         cursor.execute(query_all_flights)
         data2 = cursor.fetchall()
+
 
     elif account_type == 'booking_agent':
         page_to_render = 'booking_home_page.html'
@@ -130,9 +136,6 @@ def home():
         query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
         cursor.execute(query)
         data1 = cursor.fetchall() 
-
-
-    
 
     cursor.close()
 
@@ -216,7 +219,70 @@ def search():
     else:
         return render_template('index.html')
     
+@app.route('/user_search', methods=['GET', 'POST'])
+def user_search():
+    if request.method == 'POST': 
+        #get input from form 
+        departure_airport = request.form['dept_airport']
+        arrival_airport = request.form['arrival_airport']
+        departure_time = request.form['dept_time']
+        #
+        cursor = conn.cursor();
+        query = "SELECT * FROM flight WHERE departure_airport = %s and arrival_airport = %s and departure_time = %s"
+        cursor.execute(query, (departure_airport, arrival_airport, departure_time))
+        data = cursor.fetchall() 
+        cursor.close()
+        return render_template('search_results.html', flights=data)
 
+@app.route('/purchase_flight', methods=['GET', 'POST'])
+def purchase_flight():
+    flight_num  = request.form['flight_num'][:-1]
+    session['flight_num'] = flight_num
+
+    flight_price = request.form['flight_price'][:-1]
+
+    return render_template('purchase_flight.html', flight_num=flight_num, flight_price=flight_price)
+
+
+
+@app.route('/insert_purchase', methods=['GET', 'POST'])
+def insert_purchase():
+    if request.method == 'POST': 
+        flight_num = session['flight_num']
+        username = session['username']
+
+        #use these to findout value of flightnum
+        if len(flight_num) == 0:
+            error = 'flight num'+ str(flight_num)
+            return render_template('login.html', error=error)
+
+        
+        #first need to get ticket id from flight number 
+        cursor = conn.cursor();
+        query = "SELECT * FROM ticket WHERE ticket.flight_num = \'{}\'"
+        cursor.execute(query.format(flight_num))
+        data = cursor.fetchall()
+        cursor.close()
+
+        ticket_id = data[0][0]
+
+        if ticket_id == 0:
+            error = ticket_id
+            return render_template('login.html', error=ticket_id)
+
+        todays_date =datetime.today().strftime('%Y-%m-%d')
+
+        cursor = conn.cursor()
+        ins = "INSERT INTO purchases VALUES(\'{}\',\'{}\',NULL,\'{}\')"
+        cursor.execute(ins.format(ticket_id,username,todays_date))
+        conn.commit()   
+        cursor.close()
+
+        return redirect(url_for('home'))
+
+        
+
+        
 
 @app.route('/logout')
 def logout():

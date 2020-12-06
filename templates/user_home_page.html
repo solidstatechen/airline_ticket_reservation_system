@@ -14,9 +14,14 @@
 	table, th, td{
 		border: 1px solid black;
 	}
+
+	td a {
+    	display:block;
+    	width:100%;
+	}
 </style>
 
-<h3>Upcoming Purchased Flights</h3>
+<h3>My Purchased Flights</h3>
 <table>
 	<th>Airline</th>
 	<th>Flight Num</th>
@@ -37,9 +42,11 @@
 	</tr>
 {% endfor %}
 </table>
+<h2> Success - purchased flight_num:{{purchased_flight}}</h2>
+<h2> flight_num:{{flight_num}}</h2>
 
 <h2>Search for flights</h2>
-<form action="/search" method="POST">
+<form action="/user_search" method="POST">
 	<input type="text" name = "dept_airport" placeholder="departure airport" required/> </br>
 	<input type="text" name = "arrival_airport" placeholder="arrival airport" required/> </br>
 	<input type="text" name = "dept_time" placeholder="departure time" required/> </br>
@@ -50,7 +57,7 @@
 	{% endif %}
 </form>
 
-<h3>All Upcoming Flights</h3>
+<h3>Upcoming Flights</h3>
 <table>
 	<th>Airline</th>
 	<th>Flight Num</th>
@@ -61,14 +68,13 @@
 	<th>Status</th>
 {% for line in all_flights %}
 	<tr>
-		<a href="/purchase">
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
 		<td>{{line[2]}}</td>
 		<td>{{line[3]}}</td>
 		<td>{{line[4]}}</td>
 		<td>{{line[5]}}</td>
-		<td>{{line[7]}}</td>
+		<td><a href="/purchase">{{line[7]}}</a></td>
 		</a>
 	</tr>
 {% endfor %}
