@@ -14,14 +14,9 @@
 	table, th, td{
 		border: 1px solid black;
 	}
-
-	td a {
-    	display:block;
-    	width:100%;
-	}
 </style>
 
-<h3>My Purchased Flights</h3>
+<h3>Upcoming Purchased Flights</h3>
 <table>
 	<th>Airline</th>
 	<th>Flight Num</th>
@@ -42,14 +37,12 @@
 	</tr>
 {% endfor %}
 </table>
-<h2> Success - purchased flight_num:{{purchased_flight}}</h2>
-<h2> flight_num:{{flight_num}}</h2>
 
 <h2>Search for flights</h2>
 <form action="/user_search" method="POST">
-	<input type="text" name = "dept_airport" placeholder="departure airport" value=""/> </br>
-	<input type="text" name = "arrival_airport" placeholder="arrival airport" value=""/> </br>
-	<input type="text" name = "dept_time" placeholder="departure time" value=""/> </br>
+	<input type="text" name = "dept_airport" placeholder="departure airport"/> </br>
+	<input type="text" name = "arrival_airport" placeholder="arrival airport"/> </br>
+	<input type="text" name = "dept_time" placeholder="departure time"/> </br>
 	<input type="submit" value = Search />
 
 	{% if error %}
@@ -75,11 +68,12 @@
 		<td>{{line[4]}}</td>
 		<td>{{line[5]}}</td>
 		<td>{{line[7]}}</td>
-		</a>
 	</tr>
 {% endfor %}
 </table>
 
+
+<a href="/track_spending">Track Spending</a>
 <a href="/logout">Logout</a>
 
 </body>

@@ -1,0 +1,56 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>Checkout</h3>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+
+<h3>Flight Number: {{flight_num}}</h3>	
+	<h3>Price: {{flight_price}}</h3>
+
+<h2>Please enter customer details</h2>
+<form action="/cus_register" method="POST">
+	<label>Create username</label>
+	<input type="text" name = "username" required/> </br>
+	<label>Create password</label>
+	<input type="text" name = "password" required/> </br>
+	<label>Full name</label>
+	<input type="text" name = "name" required/> </br>
+	<label>Building Number</label>
+	<input type="text" name = "building_num"  required/></br>
+	<label>Street</label>
+	<input type="text" name = "street" required/> </br>
+	<label>City</label>
+	<input type="text" name = "city" required/> </br>
+	<label>State</label>
+	<input type="text" name = "state" required/> </br>
+	<label>Phone Number</label>
+	<input type="number" name = "phone_num" required/> </br>
+	<label>Passport Number</label>
+	<input type="number" name = "pass_num" required/> </br>
+	<label>Passport Expiration Date</label>
+	<input type="date" name = "pass_exp"  required/> </br>
+	<label>Passport Country</label>
+	<input type="text" name = "pass_country" required/> </br>
+	<label>Date of Birth</label>
+	<input type="date" name = "dob"  required/> </br>
+	<input type="submit" value = Register />
+	<input type="hidden" name="flight_price" value ={{flight_price}}/>
+	<input type="hidden" name="flight_num" value ={{flight_num}}/>
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+<a href="/home">Go back</a>
+<a href="/logout">Logout</a>
+</body>
+
+
+</html>

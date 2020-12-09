@@ -15,6 +15,9 @@
 <form action="/insert_purchase" method="POST">
 	<h3>Price: {{flight_price}}</h3>
 	<input type="submit" value ="Confirm purchase" />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
 </form>
 <a href="/home">Go back</a>
 <a href="/logout">Logout</a>

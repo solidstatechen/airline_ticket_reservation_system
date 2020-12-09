@@ -1,9 +1,12 @@
 #!C:/Users/lx615/AppData/Local/Programs/Python/Python38-32/python
 
-#Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import mysql.connector
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import json
+
+
 #Initialize the app from Flask
 app = Flask(__name__)
 
@@ -51,6 +54,9 @@ def loginAuth():
         #session is a built in
         session['username'] = username
         session['account_type'] = data[2] #data[2] is the account_type :)
+
+        #if account type is staff then query database to get staff airline name for authentification 
+
         return redirect(url_for('home'))
     else:
         #returns an error message to the html page
@@ -122,32 +128,44 @@ def home():
         query_all_flights= "SELECT * FROM flight WHERE flight.status = 'upcoming'"
         cursor.execute(query_all_flights)
         data2 = cursor.fetchall()
+        cursor.close()
+        return render_template(page_to_render, username=username, purchased_flights=data1, all_flights=data2, account_type=account_type)
 
 
     elif account_type == 'booking_agent':
         page_to_render = 'booking_home_page.html'
-        query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
-        cursor.execute(query)
+        query2 = "SELECT * FROM flight, purchases, booking_agent, ticket WHERE booking_agent.email = \'{}\' AND purchases.booking_agent_id = booking_agent.booking_agent_id  AND purchases.ticket_id = ticket.ticket_id and flight.flight_num = ticket.flight_num"
+        cursor.execute(query2.format(username))
         data1 = cursor.fetchall() 
 
+        query_all_flights= "SELECT * FROM flight WHERE flight.status = 'upcoming'"
+        cursor.execute(query_all_flights)
+        data2 = cursor.fetchall()
+        cursor.close()
+        return render_template(page_to_render, username=username, purchased_flights=data1, all_flights=data2, account_type=account_type)
 
     elif account_type == 'airline_staff':
         page_to_render = 'staff_home_page.html'
-        query = "SELECT * FROM flight WHERE flight.status = 'upcoming'"
         cursor.execute(query)
         data1 = cursor.fetchall() 
+        cursor.close()
+        return render_template(page_to_render, username=username, purchased_flights=data1, all_flights=data2, account_type=account_type)
 
+    #below never run 
     cursor.close()
-
     return render_template(page_to_render, username=username, purchased_flights=data1, all_flights=data2, account_type=account_type)
 
 @app.route('/cus_register', methods=['GET', 'POST'])
 def cus_register():
     #inserts details from customer_register into database
-    username = session['username']
-    password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
-    session['password'] = ''
     account_type = session['account_type']
+    if account_type == 'customer':
+        username = session['username']
+        password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
+        session['password'] = ''
+    elif account_type == 'booking_agent':
+        username = request.form['username']
+        password = request.form['password']
     name = request.form['name']
     building_num = request.form['building_num']
     street = request.form['street']
@@ -165,7 +183,12 @@ def cus_register():
     conn.commit()   
     cursor.close()
     #then calls /home to get the new users homepage
-    return redirect(url_for('home'))
+    if account_type == 'customer':
+        return redirect(url_for('home'))
+    elif account_type =='booking_agent':
+        flight_num = request.form['flight_num']
+        flight_price = request.form['flight_price']
+        return render_template('agent_purchase_confirm.html', data = username, flight_num= flight_num[:-1], flight_price= flight_price[:-1])
 
 @app.route('/staff_register', methods=['GET', 'POST'])
 def staff_register():
@@ -173,11 +196,14 @@ def staff_register():
     username = session['username']
     password = session['password'] #PROLLY NOT THE SAFEST WAY TO GET PASSWORD FROM 1ST FROM TO 2ND FORM
     session['password'] = ''
+
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     dob = request.form['dob']
     airline_name = request.form['airline_name']
-    
+    #send staff airline_name to their home page for authentification
+    session["staff_airline_name"] = airline_name
+
     cursor = conn.cursor()
     ins = "INSERT INTO airline_staff VALUES(\'{}\', md5(\'{}\'), \'{}\',\'{}\', \'{}\', \'{}\')"
     cursor.execute(ins.format(username, password, first_name, last_name, dob, airline_name))
@@ -276,6 +302,52 @@ def user_search():
         return render_template('search_results.html', flights=data)
         '''
 
+@app.route('/agent_search', methods=['GET', 'POST'])
+def agent_search():
+    '''
+    if request.method == 'POST': 
+        '''
+    departure_airport = request.form['dept_airport']
+    arrival_airport = request.form['arrival_airport']
+    departure_time = request.form['dept_time']
+    max_date = request.form['max_date']
+    min_date = request.form['min_date']
+    flag = request.form['booking']
+
+    cursor = conn.cursor();
+    if flag == "my":
+        query = "SELECT * from flight, purchases, booking_agent, ticket WHERE booking_agent.email = '%s' and booking_agent.booking_agent_id = purchases.booking_agent_id and flight.flight_num = ticket.flight_num and purchases.ticket_id = ticket.ticket_id" %session['username']
+        page_to_render = 'agent_search_results.html'
+    else:
+        query = "SELECT * FROM flight"
+        if departure_airport =='' and arrival_airport =='' and departure_time =='' and max_date=='' and min_date=='':
+            query +=' where flight.status = "upcoming"'
+        else:
+            query +=' where flight.status != ""'
+        page_to_render = 'agent_search_results_all.html'
+    if departure_airport !='':
+        query+= " and flight.departure_airport = '%s'" %departure_airport
+    if arrival_airport !='' :
+        query += " and flight.arrival_airport = '%s'" %arrival_airport
+    if departure_time != '':
+        query += ' and flight.departure_time = "%s"' %departure_time
+    if max_date !='' and min_date!='':
+        query += ' and (flight.departure_time >= "%s"' %min_date
+        query += ' and flight.departure_time <= "%s)"'%max_date
+    elif max_date !='' and min_date == '':
+        query += ' and flight.departure_time <= "%s"'%max_date
+    elif min_date !=''and max_date == '':
+        query += ' and flight.departure_time >= "%s"' %min_date
+    cursor.execute(query)
+    data = cursor.fetchall() 
+    cursor.close()
+    return render_template(page_to_render, flights=data)
+    '''
+    else:
+        return render_template('booking_home_page.html')
+        '''
+
+
 @app.route('/purchase_flight', methods=['GET', 'POST'])
 def purchase_flight():
     flight_num  = request.form['flight_num'][:-1]
@@ -283,9 +355,57 @@ def purchase_flight():
 
     flight_price = request.form['flight_price'][:-1]
 
-    return render_template('purchase_flight.html', flight_num=flight_num, flight_price=flight_price)
+    sesh = session['account_type']
+    if sesh == 'booking_agent':
+        page_to_render = 'agent_purchase_flight.html'
+    else:
+        page_to_render = 'purchase_flight.html'
+
+    return render_template(page_to_render, flight_num=flight_num, flight_price=flight_price)
 
 
+@app.route('/agent_confim_purchase', methods =['GET', 'POST'])
+def agent_confrim_purchase():
+    flight_num =session['flight_num']
+    flight_price = request.form['flight_price'][:-1]
+    username = session['username']
+    flag = request.form['customer']
+    if flag =='yes':
+        page_to_render = 'agent_purchase_confirm.html'
+    else:
+        page_to_render = 'agent_create_customer.html'
+
+    return render_template(page_to_render, flight_num=flight_num, flight_price=flight_price)
+
+
+@app.route('/agent_insert_purchase', methods=['GET', 'POST'])
+def agent_insert_purchase():
+    flight_num = request.form['flight_num']
+    username = session['username']
+    customer_username = request.form['customer_username']
+    cursor = conn.cursor()
+    query1 = "SELECT ticket_id FROM ticket WHERE ticket.flight_num = '%s'" %int(flight_num)
+    cursor.execute(query1)
+    ticket = cursor.fetchall()
+    cursor.close()
+    ticket_id = ticket[0][0]
+
+    todays_date =datetime.today().strftime('%Y-%m-%d')
+
+    cursor = conn.cursor()
+    agent_data = 'select booking_agent_id from booking_agent where email = "%s"' %username
+    cursor.execute(agent_data)
+    agent = cursor.fetchone()
+    cursor.close()
+    agent_id = int(agent[0])
+
+    cursor = conn.cursor()
+    ins = "INSERT INTO purchases VALUES(\'{}\',\'{}\',\'{}\',\'{}\')"
+    cursor.execute(ins.format(ticket_id,customer_username,agent_id,todays_date))
+    conn.commit()   
+    cursor.close()
+
+    return redirect(url_for('home'))
 
 @app.route('/insert_purchase', methods=['GET', 'POST'])
 def insert_purchase():
@@ -322,8 +442,113 @@ def insert_purchase():
 
         return redirect(url_for('home'))
 
-        
+@app.route('/track_spending', methods=['GET', 'POST'])
+def track_spending():
+    username = session["username"]
 
+    todays_date = datetime.today().strftime('%Y-%m-%d')
+    year_ago = (datetime.now() - relativedelta(years=1)).strftime('%Y-%m-%d')
+    six_months_ago = (datetime.now() - relativedelta(months=6)).strftime('%Y-%m-%d')
+
+    default_range = 6 - 1 
+    months_list = []
+
+    #makes a list of the last 6 months 
+    for i in range(default_range, -1, -1):
+        curr_month = (datetime.now() - relativedelta(months=i)).strftime('%Y-%m-01')
+        months_list.append(curr_month)
+
+    
+    #QUERY FOR TOTAL SPENT OVER LAST YEAR
+    cursor = conn.cursor()
+    query1 = "SELECT SUM(f.price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE p.customer_email = \'{}\' AND purchase_date >= \'{}\' AND purchase_date <= \'{}\'"
+    cursor.execute(query1.format(username, year_ago, todays_date))
+    data1 = cursor.fetchall()
+    cursor.close()
+    from_date_total_spent = int(data1[0][0])
+
+
+    #TOTAL S
+    cursor = conn.cursor()
+    query2 = "SELECT DATE_FORMAT(p.purchase_date, '%Y-%m-01'), SUM(f.price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE p.customer_email = \'{}\' AND purchase_date >= \'{}\' AND purchase_date <= \'{}\' GROUP BY DATE_FORMAT(p.purchase_date, '%Y-%m-01')"
+    cursor.execute(query2.format(username, six_months_ago, todays_date))
+    data2 = cursor.fetchall()
+    cursor.close()
+
+    monthly_data = data2
+
+    monthly_spending_list = []
+
+
+    for j in range(len(months_list)):
+        monthly_spending_list.append(0)
+        for item in monthly_data:
+            #check if dates match up
+            if months_list[j] == item[0]:
+                error = 'MATCH'
+                monthly_spending_list[j] = int(item[1])
+
+    
+    return render_template('spending.html', monthly_spending_list=json.dumps(monthly_spending_list), months_list=json.dumps(months_list), total_spending=from_date_total_spent)
+
+
+@app.route('/search_track_spending', methods=['GET', 'POST'])
+def search_track_spending():
+    username = session["username"]
+    min_date = request.form['min_date']
+    max_date = request.form['max_date']
+
+    min_datetime_object = datetime.strptime(min_date, '%Y-%m-%d')
+    max_datetime_object = datetime.strptime(max_date, '%Y-%m-%d')
+
+    num_months = (max_datetime_object.year - min_datetime_object.year) * 12 + (max_datetime_object.month - min_datetime_object.month)
+    #line below needed as num_months is one short 
+    num_months += 1
+
+    
+
+
+
+    desired_range = num_months - 1 
+    months_list = []
+
+    #makes a list of the last of months between range
+    for i in range(desired_range, -1, -1):
+        curr_month = (max_datetime_object - relativedelta(months=i)).strftime('%Y-%m-01')
+        months_list.append(curr_month)
+
+    
+    #QUERY FOR TOTAL SPENT BETWEEN RANGE
+    cursor = conn.cursor()
+    query1 = "SELECT SUM(f.price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE p.customer_email = \'{}\' AND purchase_date >= \'{}\' AND purchase_date <= \'{}\'"
+    cursor.execute(query1.format(username, min_datetime_object, max_datetime_object))
+    data1 = cursor.fetchall()
+    cursor.close()
+    from_date_total_spent = int(data1[0][0])
+
+
+    #QUERY FOR TOTAL Spent on each given month 
+    cursor = conn.cursor()
+    query2 = "SELECT DATE_FORMAT(p.purchase_date, '%Y-%m-01'), SUM(f.price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE p.customer_email = \'{}\' AND purchase_date >= \'{}\' AND purchase_date <= \'{}\' GROUP BY DATE_FORMAT(p.purchase_date, '%Y-%m-01')"
+    cursor.execute(query2.format(username, min_datetime_object, max_datetime_object))
+    data2 = cursor.fetchall()
+    cursor.close()
+
+    monthly_data = data2
+
+    monthly_spending_list = []
+
+
+    for j in range(len(months_list)):
+        monthly_spending_list.append(0)
+        for item in monthly_data:
+            #check if dates match up
+            if months_list[j] == item[0]:
+                error = 'MATCH'
+                monthly_spending_list[j] = int(item[1])
+
+    
+    return render_template('search_spending_results.html', monthly_spending_list=json.dumps(monthly_spending_list), months_list=json.dumps(months_list), total_spending=from_date_total_spent)
         
 
 @app.route('/logout')
