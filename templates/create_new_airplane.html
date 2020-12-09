@@ -1,0 +1,27 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>Create new airplane</h3>
+
+<form action="/insert_new_airplane" method="POST">
+	<label>Airline Name</label>
+	<input type="text" name = "airplane_name" required/> </br>
+	<label>Airplane ID</label>
+	<input type="number" name = "airplane_id"  required/></br>
+	<label>Number of Seats</label>
+	<input type="number" name = "seats" required/> </br>
+	<input type="submit" value = Create />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+	
+
+<a href="/home">Go back</a>
+
+</body>
+
+
+</html>

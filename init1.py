@@ -71,9 +71,9 @@ def registerAuth():
     password = request.form['password']
     account_type = request.form['radio_answer']
 
-#   if not len(password) >= 4:
-#                flash("Password length must be at least 4 characters")
- #               return redirect(request.url)
+    if not len(password) >= 4:
+        flash("Password length must be at least 4 characters")
+        return redirect(request.url)
 
     #cursor used to send queries
 
@@ -146,10 +146,12 @@ def home():
 
     elif account_type == 'airline_staff':
         page_to_render = 'staff_home_page.html'
+        #defualt search to be done ----
+        '''
         cursor.execute(query)
         data1 = cursor.fetchall() 
-        cursor.close()
-        return render_template(page_to_render, username=username, purchased_flights=data1, all_flights=data2, account_type=account_type)
+        cursor.close()'''
+        return render_template(page_to_render, username=username, account_type=account_type)
 
     #below never run 
     cursor.close()
@@ -364,8 +366,8 @@ def purchase_flight():
     return render_template(page_to_render, flight_num=flight_num, flight_price=flight_price)
 
 
-@app.route('/agent_confim_purchase', methods =['GET', 'POST'])
-def agent_confrim_purchase():
+@app.route('/agent_confirm_purchase', methods =['GET', 'POST'])
+def agent_confirm_purchase():
     flight_num =session['flight_num']
     flight_price = request.form['flight_price'][:-1]
     username = session['username']
@@ -505,9 +507,6 @@ def search_track_spending():
     #line below needed as num_months is one short 
     num_months += 1
 
-    
-
-
 
     desired_range = num_months - 1 
     months_list = []
@@ -550,6 +549,70 @@ def search_track_spending():
     
     return render_template('search_spending_results.html', monthly_spending_list=json.dumps(monthly_spending_list), months_list=json.dumps(months_list), total_spending=from_date_total_spent)
         
+@app.route('/create_new_flight', methods=['GET', 'POST'])
+def create_new_flight():
+    #here we can query for the staffs airline name 
+    return render_template('create_new_flight.html')
+
+@app.route('/insert_new_flight', methods=['GET', 'POST'])
+def insert_new_flight():
+    airline_name = request.form['airline_name']
+    flight_num = request.form['flight_num']
+    departure_airport = request.form['departure_airport']
+    departure_time = request.form['departure_time']
+    arrival_airport = request.form['arrival_airport']
+    arrival_time = request.form['arrival_time']
+    price = request.form['price']
+    status = request.form['status']
+    airline_id = request.form['airline_id']
+
+
+    cursor = conn.cursor()
+    ins = "INSERT INTO flight VALUES(\'{}\', \'{}\',\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+    cursor.execute(ins.format(airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airline_id))
+    conn.commit()   
+    cursor.close()    
+    return redirect(url_for('home'))
+
+
+@app.route('/create_new_airport', methods=['GET', 'POST'])
+def create_new_airport():
+    #here we can query for the staffs airline name 
+    return render_template('create_new_airport.html')
+
+@app.route('/insert_new_airport', methods=['GET', 'POST'])
+def insert_new_airport():
+    airport_name = request.form['airport_name']
+    city = request.form['city']
+    
+
+    cursor = conn.cursor()
+    ins = "INSERT INTO airport VALUES(\'{}\', \'{}\')"
+    cursor.execute(ins.format(airport_name, city))
+    conn.commit()   
+    cursor.close()    
+    return redirect(url_for('home'))
+
+
+@app.route('/create_new_airplane', methods=['GET', 'POST'])
+def create_new_airplane():
+    #here we can query for the staffs airline name 
+    return render_template('create_new_airplane.html')
+
+@app.route('/insert_new_airplane', methods=['GET', 'POST'])
+def insert_new_airplane():
+    airline_name = request.form['airline_name']
+    airplane_id = request.form['airplane_id']
+    seats = request.form['seats']
+
+    cursor = conn.cursor()
+    ins = "INSERT INTO airplane VALUES(\'{}\', \'{}\', \'{}\')"
+    cursor.execute(ins.format(airline_name, airplane_id, seats))
+    conn.commit()   
+    cursor.close()    
+    return redirect(url_for('home'))
+
+
 
 @app.route('/logout')
 def logout():

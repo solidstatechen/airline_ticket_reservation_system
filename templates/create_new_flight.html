@@ -6,26 +6,24 @@
 <h3>Create new flight</h3>
 
 <form action="/insert_new_flight" method="POST">
-	<label>full name</label>
-	<input type="text" name = "name" required/> </br>
-	<label>Building Number</label>
-	<input type="text" name = "building_num"  required/></br>
-	<label>Street</label>
-	<input type="text" name = "street" required/> </br>
-	<label>City</label>
-	<input type="text" name = "city" required/> </br>
-	<label>State</label>
-	<input type="text" name = "state" required/> </br>
-	<label>Phone Number</label>
-	<input type="number" name = "phone_num" required/> </br>
-	<label>Passport Number</label>
-	<input type="number" name = "pass_num" required/> </br>
-	<label>Passport Expiration Date</label>
-	<input type="date" name = "pass_exp"  required/> </br>
-	<label>Passport Country</label>
-	<input type="text" name = "pass_country" required/> </br>
-	<label>Date of Birth</label>
-	<input type="date" name = "dob"  required/> </br>
+	<label>Airline Name</label>
+	<input type="text" name = "airline_name" required/> </br>
+	<label>Flight Number</label>
+	<input type="number" name = "flight_num"  required/></br>
+	<label>Departure Airport</label>
+	<input type="text" name = "departure_airport" required/> </br>
+	<label>Departure Time</label>
+	<input type="datetime-local" step="1" name = "departure_time" required/> </br>
+	<label>Arrival Airport</label>
+	<input type="text" name = "arrival_airport" required/> </br>
+	<label>Arrival Time</label>
+	<input type="datetime-local" step="1" name = "arrival_time" required/> </br>
+	<label>Price</label>
+	<input type="number" name = "price" required/> </br>
+	<label>Status</label>
+	<input type="text" name = "status"  required/> </br>
+	<label>Airplane ID</label>
+	<input type="number" name = "airline_id" required/> </br>
 	<input type="submit" value = Create />
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
@@ -34,7 +32,7 @@
 	
 
 <a href="/home">Go back</a>
-<a href="/logout">Logout</a>
+
 </body>
 
 
