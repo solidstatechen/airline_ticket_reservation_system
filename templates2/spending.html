@@ -1,0 +1,71 @@
+<html>
+<head>	
+</head>
+<body>
+
+<h2>Amount spent past year ${{total_spending}}</h2>
+<div><canvas id="myChart" width="400" height="400"></canvas></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+<script>
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var months_list = {{ months_list|safe }};
+var monthly_spending_list = {{ monthly_spending_list|safe }};
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: months_list,
+        datasets: [{
+            label: 'Spent this month $',
+            data: monthly_spending_list,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+    	responsive: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
+<form action="/search_track_spending" method="POST">
+	<label> <for="min_date">Min Date:</label>
+	<input type="date" name = 'min_date' placeholder="earliest date" value=''>
+	<label> <for="max_date">Max Date:</label>
+	<input type="date" name = 'max_date' placeholder="latest date" value=''>
+	<input type="submit" value = Search />
+
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+
+
+
+<a href="/home">Go back</a>
+
+</body>
+
+
+</html>

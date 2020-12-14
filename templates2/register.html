@@ -1,0 +1,22 @@
+<html>
+<head>
+</head>
+<body>
+<form action="/registerAuth" method="POST">
+	<input type="radio" name="radio_answer" value="customer" required>
+	<label for="customer">Customer</label><br>
+	<input type="radio" name="radio_answer" value="booking_agent">
+	<label for="booking_agent">Booking Agent</label><br>
+	<input type="radio" name="radio_answer" value="airline_staff">
+	<label for="airline_staff">Airline Staff</label><br>
+
+	<input type="text" name = "username" placeholder="username" required/> </br>
+	<input type="password" name = "password" placeholder="password" required/></br>
+	<input type="submit" value = Register />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+<a href="/">Go back</a>
+</body>
+</html>

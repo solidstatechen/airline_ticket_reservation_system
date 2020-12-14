@@ -1,0 +1,48 @@
+<html>
+<head>
+</head>
+<body>
+<h3>My Earnings</h3>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+
+
+<a>My commission:{{my_commission}}</a>
+</br>
+<table>
+	<th>Tickets Sold</th>
+	<th>Total Commission</th>
+	<th>Average Commission</th>
+	<tr>
+		<td>{{count}}</td>
+		<td>{{total}}</td>
+		<td>{{average}}</td>
+	</tr>
+</table>
+
+
+
+</br>
+<a>Default 30 days</a>
+<form action="/earnings" method="POST">
+	<label> <for="min_date">Min Date:</label>
+	<input type="date" name = 'min_date' placeholder="earliest date" value={{min_date}}>
+	<label> <for="max_date">Max Date:</label>
+	<input type="date" name = 'max_date' placeholder="latest date" value={{max_date}}>
+	<input type="submit" value = Search />
+</form>
+
+
+<a href="/home">Go back</a></br>
+<a href="/logout">Logout</a>
+
+
+</body>
+
+
+</html>

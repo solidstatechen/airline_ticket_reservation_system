@@ -17,7 +17,7 @@
 	}
 </style>
 
-<h3>Upcoming Flights in next 30 days</h3>
+<h3>Flights</h3>
 <table>
 	<th>Airline</th>
 	<th>Flight Num</th>
@@ -26,15 +26,25 @@
 	<th>Arrival Airport</th>
 	<th>Arrival Time</th>
 	<th>Status</th>
+	<th>View Customers</th>
+	<th>Change Status</th>
 {% for line in flights %}
 	<tr>
+		<form action='/all_flyers' method='POST'>
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
+		<input type="hidden" name="flight_num" value={{line[1]}}>
 		<td>{{line[2]}}</td>
 		<td>{{line[3]}}</td>
 		<td>{{line[4]}}</td>
 		<td>{{line[5]}}</td>
 		<td>{{line[7]}}</td>
+		<td><input type="submit" value='View Customers'></td>
+		</form>
+		<form action="/status", method='POST'>
+		<input type="hidden" name="flight_num" value={{line[1]}}>
+		<td><input type="submit" value='Change Status'></td>
+		</form>
 	</tr>
 {% endfor %}
 </table>
@@ -53,6 +63,7 @@
 </br><a href="/create_new_flight">Create new flight</a></br>
 <a href="/create_new_airport">Create new airport</a></br>
 <a href="/create_new_airplane">Create new airplane</a></br>
+<a href='/home'>Home</a></br>
 <a href="/logout">Logout</a></br>
 
 </body>

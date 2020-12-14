@@ -1,0 +1,45 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>My Earnings</h3>
+
+<h2>{{my_commission}}</h2>
+
+<h2>Test</h2>
+
+
+<table>
+	<th>Tickets Sold</th>
+	<th>Total Commission</th>
+	<th>Average Commission</th>
+	<tr>
+		<td>{{count}}</td>
+		<td>{{total}}</td>
+		<td>{{average}}</td>
+	</tr>
+</table>
+
+
+
+
+<h2>Search for flights</h2>
+<form action="/search" method="POST">
+	<input type="text" name = "dept_airport" placeholder="departure airport" value=""/> </br>
+	<input type="text" name = "arrival_airport" placeholder="arrival airport" value=""/> </br>
+	<input type="text" name = "dept_time" placeholder="departure time" value=""/> </br>
+	<input type="submit" value = Search />
+
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+
+
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>

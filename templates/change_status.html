@@ -1,0 +1,24 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>Change Flight Status of {{flight_num}}</h3>
+
+<form action="/change_status" method="POST">
+	<label>Change Status of {{flight_num}} to</label>
+	<input type="text" name = "status" required/> </br>
+	<input type="hidden" name="flight_num" value={{flight_num}}>
+	<input type="submit" value = Confirm />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+	
+
+<a href="/home">Go back</a>
+
+</body>
+
+
+</html>

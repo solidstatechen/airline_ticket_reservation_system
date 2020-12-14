@@ -1,0 +1,106 @@
+<html>
+<head>
+</head>
+<body>
+<h3>Top Customers</h3>
+
+
+<h2>Amount spent past year ${{ee}}</h2>
+<h2>Amount spent past year ${{vv}}</h2>
+
+<div><canvas id="myChart" width="400" height="400"></canvas></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+<div style="display: inline-block">
+  	<h3>Top 5 by # of purchases in last 6 months</h3>
+  <table>
+    <th>Customer Email</th>
+	<th># Tickets Purchased</th>
+	{% for line in most_number %}
+	<tr>	
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}</td>
+	{% endfor %}	
+  </table>
+
+
+</div>
+
+
+
+<div>
+<script>
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var months_list = {{customer_names|safe}};
+var monthly_spending_list = {{purchase_amount|safe}};
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: months_list,
+        datasets: [{
+            label: 'Spent this month $',
+            data: monthly_spending_list,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
+
+
+</script>
+</div>
+
+<div style="float: left">
+	<h3>Top 5 by commission in last year</h3>
+  <table>
+    <th>Customer Email</th>
+	<th>Total commission</th>
+	{% for line in most_money %}
+	<tr>	
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}</td>
+	{% endfor %} 
+  </table>
+<a href="/home">Go back</a></br>
+<a href="/logout">Logout</a>
+</div>
+
+</br>
+
+</body>
+
+
+</html>

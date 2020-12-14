@@ -2,21 +2,15 @@
 <head>
 </head>
 <body>
-<h3>Welcome {{account_type}} - {{username}}</h3>
-<!--
-<form action="/post" method="POST">
-	<h1>Welcome {{username}}</h1>
-	<input type="text" name = "blog" placeholder="your post" required/> </br>
-	<input type="submit" value = Post />
-</form>
--->
+<h3>Search Results</h3>
+
 <style type="text/css">
 	table, th, td{
 		border: 1px solid black;
 	}
 </style>
-<h2>Purchased Flights</h2>
-<h3>Search for flights</h3>
+
+<h2>Search for flights</h2>
 <form action="/agent_search" method="POST">
 	<input type="text" name = "dept_airport" placeholder="departure airport" value=''/> 
 	<input type="text" name = "arrival_airport" placeholder="arrival airport" value=''/>
@@ -25,14 +19,16 @@
 	<input type="date" name = 'min_date' placeholder="earliest date" value=''>
 	<label> <for="max_date">Max Date:</label>
 	<input type="date" name = 'max_date' placeholder="latest date" value=''>
-    <label><input type="radio" class="booking" value="my" name="booking" required/>My bookings</label>
-    <label><input type="radio" class="booking" value="all" name="booking" required/>All flights</label>
+	<label><input type="radio" class="booking" value="my" name="booking" required />My bookings</label>
+    <label><input type="radio" class="booking" value="all" name="booking" requred/>All flights</label>
 	<input type="submit" value = Search />
 
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
 	{% endif %}
 </form>
+
+<h3>Purchased Flights Search Results</h3>
 <table>
 	<th>Airline</th>
 	<th>Flight Number</th>
@@ -44,7 +40,7 @@
 	<th>Status</th>
 
 
-{% for line in purchased_flights %}
+{% for line in flights %}
 	<tr>
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
@@ -56,34 +52,10 @@
 		<td>{{line[7]}}</td>
 	</tr>
 {% endfor %}
-</table>
 
-<h3>All Upcoming Flights</h3>
-<table>
-	<th>Airline</th>
-	<th>Flight Num</th>
-	<th>Deptarture Airport</th>
-	<th>Deptarture Time</th>
-	<th>Arrival Airport</th>
-	<th>Arrival Time</th>
-	<th>Status</th>
-{% for line in all_flights %}
-	<tr>
-		<td>{{line[0]}}</td>
-		<td>{{line[1]}}</td>
-		<td>{{line[2]}}</td>
-		<td>{{line[3]}}</td>
-		<td>{{line[4]}}</td>
-		<td>{{line[5]}}</td>
-		<td>{{line[7]}}</td>
-	</tr>
-{% endfor %}
-</table>
 <a href="/logout">Logout</a></br>
-<a href='/home'>Home</a></br>
-<a href='/earnings'>My Earnings</a></br>
-<a href='/top_customers_money'>Top customers by commission</a></br>
-<a href='/top_customers_number'>Top customers by ticket#</a>
+<a href='/home'>Home</a>
+
 </body>
 
 
