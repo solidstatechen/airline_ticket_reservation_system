@@ -305,19 +305,7 @@ def user_search():
         flag = request.form['booking']
 
         cursor = conn.cursor();
-        query = "SELECT * FROM flight"
-        if departure_airport !='':
-            query+= " where departure_airport = '%s'" %departure_airport
-
-        if arrival_airport !='' and departure_airport =='':
-            query += " where arrival_airport = '%s'" % arrival_airport
-        elif arrival_airport !='' :
-            query += " and arrival_airport = '%s'" %arrival_airport
-
-        if departure_time != '' and (departure_airport =='' and arrival_airport ==''):
-            query += ' where departure_time = "%s"' %departure_time
-        elif departure_time != '':
-            query += ' and departure_time = "%s"' %departure_time
+        query = "SELECT * FROM flight where flight.status != '' "
         if flag == 'my':
             query= "SELECT * FROM flight, purchases, ticket \
                                     WHERE purchases.customer_email = '%s' \
@@ -326,6 +314,14 @@ def user_search():
             template = 'search_purchased.html'
         else:
             template ='search_results.html'
+
+        if departure_airport !='':
+            query+= " and flight.departure_airport = '%s'" %departure_airport
+        if arrival_airport !='' :
+            query += " and flight.arrival_airport = '%s'" %arrival_airport
+        if departure_time != '':
+            query += ' and flight.departure_time = "%s"' %departure_time
+        
         
         cursor.execute(query)
         data = cursor.fetchall() 
@@ -333,20 +329,6 @@ def user_search():
         return render_template(template, flights=data)
     else:
         return render_template('index.html')
-    '''
-    if request.method == 'POST': 
-        #get input from form 
-        departure_airport = request.form['dept_airport']
-        arrival_airport = request.form['arrival_airport']
-        departure_time = request.form['dept_time']
-        #
-        cursor = conn.cursor();
-        query = "SELECT * FROM flight WHERE departure_airport = %s and arrival_airport = %s and departure_time = %s"
-        cursor.execute(query, (departure_airport, arrival_airport, departure_time))
-        data = cursor.fetchall() 
-        cursor.close()
-        return render_template('search_results.html', flights=data)
-        '''
 
 @app.route('/agent_search', methods=['GET', 'POST'])
 def agent_search():
