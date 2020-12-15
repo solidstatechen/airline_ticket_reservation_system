@@ -1017,10 +1017,10 @@ def view_top_destination():
 
 @app.route('/top_year_des', methods=['GET', 'POST'])
 def top_year_des():
-    three_month_ago = (datetime.now() - relativedelta(months=12)).strftime('%Y-%m-01')
+    year_ago = (datetime.now() - relativedelta(months=12)).strftime('%Y-%m-01')
     cursor = conn.cursor()
     query1 = "SELECT arrival_airport, COUNT(t.ticket_id) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id AND p.purchase_date >= \'{}\' GROUP BY arrival_airport ORDER BY COUNT(t.ticket_id) desc LIMIT 3"
-    cursor.execute(query1.format(three_month_ago))
+    cursor.execute(query1.format(year_ago))
     data1 = cursor.fetchall()
     cursor.close()
 
