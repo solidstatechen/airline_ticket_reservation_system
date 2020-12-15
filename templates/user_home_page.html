@@ -43,6 +43,8 @@
 	<input type="text" name = "dept_airport" placeholder="departure airport"/> </br>
 	<input type="text" name = "arrival_airport" placeholder="arrival airport"/> </br>
 	<input type="text" name = "dept_time" placeholder="departure time"/> </br>
+    <label><input type="radio" class="booking" value="my" name="booking" required/>My bookings</label>
+    <label><input type="radio" class="booking" value="all" name="booking" required/>All flights</label>
 	<input type="submit" value = Search />
 
 	{% if error %}

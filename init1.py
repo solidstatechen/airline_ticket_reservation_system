@@ -15,7 +15,7 @@ app = Flask(__name__)
 conn = mysql.connector.connect(host='localhost',
                        user='root',
                        password='',
-                       port = 3307,
+                       port=3307,
                        database='airline_reservation')
 
 
@@ -134,7 +134,10 @@ def home():
     cursor = conn.cursor()
     if account_type == 'customer':
         page_to_render = 'user_home_page.html'
-        query_purchased_flights = "SELECT * FROM flight, purchases, ticket WHERE purchases.customer_email = \'{}\' AND purchases.ticket_id = ticket.ticket_id AND ticket.flight_num = flight.flight_num"
+        query_purchased_flights = "SELECT * FROM flight, purchases, ticket \
+                                    WHERE purchases.customer_email = \'{}\' \
+                                    AND purchases.ticket_id = ticket.ticket_id \
+                                    AND ticket.flight_num = flight.flight_num and flight.status ='upcoming' "
         cursor.execute(query_purchased_flights.format(username))
         data1 = cursor.fetchall() 
 
@@ -299,6 +302,7 @@ def user_search():
         departure_airport = request.form['dept_airport']
         arrival_airport = request.form['arrival_airport']
         departure_time = request.form['dept_time']
+        flag = request.form['booking']
 
         cursor = conn.cursor();
         query = "SELECT * FROM flight"
@@ -314,11 +318,19 @@ def user_search():
             query += ' where departure_time = "%s"' %departure_time
         elif departure_time != '':
             query += ' and departure_time = "%s"' %departure_time
+        if flag == 'my':
+            query= "SELECT * FROM flight, purchases, ticket \
+                                    WHERE purchases.customer_email = '%s' \
+                                    AND purchases.ticket_id = ticket.ticket_id \
+                                    AND ticket.flight_num = flight.flight_num " %session['username']
+            template = 'search_purchased.html'
+        else:
+            template ='search_results.html'
         
         cursor.execute(query)
         data = cursor.fetchall() 
         cursor.close()
-        return render_template('search_results.html', flights=data)
+        return render_template(template, flights=data)
     else:
         return render_template('index.html')
     '''
@@ -724,7 +736,15 @@ def all_flyers():
 @app.route('/create_new_flight', methods=['GET', 'POST'])
 def create_new_flight():
     #here we can query for the staffs airline name 
-    return render_template('create_new_flight.html')
+    username = session["username"]
+    cursor = conn.cursor()
+    query1 = "SELECT a.airline_name FROM airline_staff a WHERE a.username = \'{}\'"
+    cursor.execute(query1.format(username))
+    data1 = cursor.fetchall()
+    cursor.close()
+
+    session["airline_name"] = data1
+    return render_template('create_new_flight.html', data=data1)
 
 @app.route('/status', methods=['GET', 'POST'])
 def status():
@@ -753,20 +773,42 @@ def insert_new_flight():
     arrival_time = request.form['arrival_time']
     price = request.form['price']
     status = request.form['status']
-    airline_id = request.form['airline_id']
+    airplane_id = request.form['airplane_id']
+
+    error = 0
+    my_airline_name = session["airline_name"]
+
+    if my_airline_name[0][0] == airline_name:
+        error = 1
 
 
-    cursor = conn.cursor()
-    ins = "INSERT INTO flight VALUES(\'{}\', \'{}\',\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
-    cursor.execute(ins.format(airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airline_id))
-    conn.commit()   
-    cursor.close()    
-    return redirect(url_for('home'))
+    if error == 1:
+        #add new flight to system
+        cursor = conn.cursor()
+        ins = "INSERT INTO flight VALUES(\'{}\', \'{}\',\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(airline_name, flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id))
+        conn.commit()   
+        cursor.close()    
+        
+
+        #show new results of all staff airline flights
+        cursor = conn.cursor()
+        query1 = "SELECT * FROM flight WHERE flight.airline_name = \'{}\'"
+        cursor.execute(query1.format(airline_name))
+        data1 = cursor.fetchall()
+        cursor.close()
+
+        return render_template('staff_airline_flights.html', flights= data1)
+        
+    else:
+        error = "You do not have permission to add to that airline, please try again"
+        return render_template('create_new_flight.html', error= error)
 
 
 @app.route('/create_new_airport', methods=['GET', 'POST'])
 def create_new_airport():
-    #here we can query for the staffs airline name 
+  
+    #here we can query for the staffs airline name
     return render_template('create_new_airport.html')
 
 @app.route('/insert_new_airport', methods=['GET', 'POST'])
@@ -785,22 +827,51 @@ def insert_new_airport():
 
 @app.route('/create_new_airplane', methods=['GET', 'POST'])
 def create_new_airplane():
+    username = session["username"]
+    cursor = conn.cursor()
+    query1 = "SELECT a.airline_name FROM airline_staff a WHERE a.username = \'{}\'"
+    cursor.execute(query1.format(username))
+    data1 = cursor.fetchall()
+    cursor.close()
+
+    session["airline_name"] = data1
+
     #here we can query for the staffs airline name 
-    return render_template('create_new_airplane.html')
+    return render_template('create_new_airplane.html', data=data1)
 
 @app.route('/insert_new_airplane', methods=['GET', 'POST'])
 def insert_new_airplane():
     airline_name = request.form['airline_name']
     airplane_id = request.form['airplane_id']
     seats = request.form['seats']
+    error = 0
+    my_airline_name = session["airline_name"]
 
-    cursor = conn.cursor()
-    ins = "INSERT INTO airplane VALUES(\'{}\', \'{}\', \'{}\')"
-    cursor.execute(ins.format(airline_name, airplane_id, seats))
-    conn.commit()   
-    cursor.close()    
-    return redirect(url_for('home'))
+    if my_airline_name[0][0] == airline_name:
+        error = 1
 
+
+    if error == 1:
+         #add new flight to system
+        cursor = conn.cursor()
+        ins = "INSERT INTO airplane VALUES(\'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(airline_name, airplane_id, seats))
+        conn.commit()   
+        cursor.close()    
+
+        #show new results of all staff airline flights
+        cursor = conn.cursor()
+        query1 = "SELECT * FROM airplane WHERE airplane.airline_name = \'{}\'"
+        cursor.execute(query1.format(my_airline_name[0][0]))
+        data1 = cursor.fetchall()
+        cursor.close()
+
+        return render_template('staff_airline_airplanes.html', flights= data1)
+        
+    else:
+        error = "You do not have permission to add to that airline, please try again"
+        return render_template('create_new_airplane.html', error= error)
+       
 @app.route('/top_agents')
 def top_agents():
     airline_name = session['airline_name']
@@ -985,7 +1056,8 @@ def top_year_des():
 @app.route('/comparison_revenue', methods=['GET', 'POST'])
 def comparison_revenue():
     
-    
+
+
     cursor = conn.cursor()
     query1 = "SELECT SUM(price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE booking_agent_id IS NULL"
     cursor.execute(query1)
@@ -1006,6 +1078,30 @@ def comparison_revenue():
 
     return render_template('chart_no_booking_agent.html', data=revenue)
 
+@app.route('/comparison_revenue_last_month', methods=['GET', 'POST'])
+def comparison_revenue_last_month():
+    last_month = datetime.now().strftime('%Y-%m-01')
+
+    
+    cursor = conn.cursor()
+    query1 = "SELECT SUM(price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE booking_agent_id IS NULL AND p.purchase_date >= \'{}\'"
+    cursor.execute(query1.format(last_month))
+    data1 = cursor.fetchall()
+    cursor.close()
+
+    revenue = []
+    revenue.append(int(data1[0][0]))
+
+    cursor = conn.cursor()
+    query2 = "SELECT SUM(price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE booking_agent_id IS NOT NULL AND p.purchase_date >= \'{}\'"
+    cursor.execute(query2.format(last_month))
+    data2 = cursor.fetchall()
+    cursor.close()
+
+    revenue_with_booking = int(data2[0][0])
+    revenue.append(revenue_with_booking)
+
+    return render_template('revenue_chart_last_month.html', data=revenue)
 
 
 

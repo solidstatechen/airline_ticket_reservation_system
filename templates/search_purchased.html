@@ -1,0 +1,44 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>Purchased Flights Search</h3>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+<h3>Purchased Flights</h3>
+{% for line in flights %}
+
+	<table>
+		<th>Airline</th>
+		<th>Flight Num</th>
+		<th>Deptarture Airport</th>
+		<th>Deptarture Time</th>
+		<th>Arrival Airport</th>
+		<th>Arrival Time</th>
+		<th>Price</th>
+		<th>Status</th>
+		<tr>
+			<td>{{line[0]}}</td>
+			<td>{{line[1]}}</td>
+			<td>{{line[2]}}</td>
+			<td>{{line[3]}}</td>
+			<td>{{line[4]}}</td>
+			<td>{{line[5]}}</td>
+			<td>{{line[6]}}</td>
+			<td>{{line[7]}}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	
+
+<a href="/home">Go back</a>
+<a href="/logout">Logout</a>
+</body>
+
+
+</html>

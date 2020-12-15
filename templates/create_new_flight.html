@@ -4,7 +4,7 @@
 <body>
 
 <h3>Create new flight</h3>
-
+<h4>{{error}}</h4>
 <form action="/insert_new_flight" method="POST">
 	<label>Airline Name</label>
 	<input type="text" name = "airline_name" required/> </br>
@@ -23,7 +23,7 @@
 	<label>Status</label>
 	<input type="text" name = "status"  required/> </br>
 	<label>Airplane ID</label>
-	<input type="number" name = "airline_id" required/> </br>
+	<input type="number" name = "airplane_id" required/> </br>
 	<input type="submit" value = Create />
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>

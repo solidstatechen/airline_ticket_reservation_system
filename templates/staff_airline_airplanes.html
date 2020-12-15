@@ -3,35 +3,30 @@
 </head>
 <body>
 
-<h3>{{customer_email}} Flights </h3>
+<h3>My Airlines Airplanes</h3>
 <style type="text/css">
 	table, th, td{
 		border: 1px solid black;
 	}
 </style>
 
-<h3>All flights purchased by {{customer_email}}</h3>
+
 <table>
-	<th>Name</th>
-	<th>Departure Airport</th>
-	<th>Departure Time</th>
-	<th>Arrival Airport</th>
-	<th>Flight Number</th>
-	<th>Purchase Date</th>
+	<th>Airline Name</th>
+	<th>Airplane ID</th>
+	<th>Seats</th>
+	
 {% for line in flights %}
 	<tr>
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
 		<td>{{line[2]}}</td>
-		<td>{{line[3]}}</td>
-		<td>{{line[4]}}</td>
-		<td>{{line[5]}}</td>
 	</form>
 	</tr>
 {% endfor %}
 </table>
 
-<a href="/top_buyers">Go back</a></br>
+
 <a href='/home'>Home</a></br>
 <a href="/logout">Logout</a></br>
 

@@ -1,0 +1,47 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>My Airline's Upcoming Flights</h3>
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<table>
+	<th>Airline Name</th>
+	<th>Flight Num</th>
+	<th>Departure Airport</th>
+	<th>Departure Time</th>
+	<th>Arrival Airport</th>
+	<th>Arrival Time</th>
+	<th>Price</th>
+	<th>Status</th>
+	<th>Airplane ID</th>
+{% for line in flights %}
+	<tr>
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}</td>
+		<td>{{line[2]}}</td>
+		<td>{{line[3]}}</td>
+		<td>{{line[4]}}</td>
+		<td>{{line[5]}}</td>
+		<td>{{line[6]}}</td>
+		<td>{{line[7]}}</td>
+		<td>{{line[8]}}</td>
+
+	</form>
+	</tr>
+{% endfor %}
+</table>
+
+
+<a href='/home'>Home</a></br>
+<a href="/logout">Logout</a></br>
+
+</body>
+
+
+</html>
