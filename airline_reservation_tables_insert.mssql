@@ -1,0 +1,423 @@
+-- phpMyAdmin SQL Dump
+-- version 5.0.2
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Generation Time: Dec 15, 2020 at 04:07 PM
+-- Server version: 10.4.14-MariaDB
+-- PHP Version: 7.4.10
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `airline_reservation`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `airline`
+--
+
+CREATE TABLE `airline` (
+  `airline_name` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `airline`
+--
+
+INSERT INTO `airline` (`airline_name`) VALUES
+('China Eastern');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `airline_staff`
+--
+
+CREATE TABLE `airline_staff` (
+  `username` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
+  `date_of_birth` date NOT NULL,
+  `airline_name` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `airline_staff`
+--
+
+INSERT INTO `airline_staff` (`username`, `password`, `first_name`, `last_name`, `date_of_birth`, `airline_name`) VALUES
+('mingling', 'pass1234', 'ming', 'ling', '1980-10-22', 'China Eastern'),
+('staff2', '5f4dcc3b5aa765d61d8327deb882cf99', 'beckham', 'david', '2020-12-05', 'China Eastern'),
+('staffer', '5f4dcc3b5aa765d61d8327deb882cf99', 'r', 'r', '2020-12-09', 'China Eastern'),
+('tretter', '5f4dcc3b5aa765d61d8327deb882cf99', 're', 're', '1992-07-10', 'China Eastern'),
+('WORLDSFINIESTSTAFF', '5f4dcc3b5aa765d61d8327deb882cf99', 'F', 'F', '2020-12-05', 'China Eastern');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `airplane`
+--
+
+CREATE TABLE `airplane` (
+  `airline_name` varchar(50) NOT NULL,
+  `airplane_id` int(11) NOT NULL,
+  `seats` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `airplane`
+--
+
+INSERT INTO `airplane` (`airline_name`, `airplane_id`, `seats`) VALUES
+('China Eastern', 231, 12),
+('China Eastern', 456, 12),
+('China Eastern', 1000, 315),
+('China Eastern', 1253, 230),
+('China Eastern', 2222, 345),
+('China Eastern', 3333, 345),
+('China Eastern', 4444, 345),
+('China Eastern', 9837, 400),
+('China Eastern', 11111, 345);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `airport`
+--
+
+CREATE TABLE `airport` (
+  `airport_name` varchar(50) NOT NULL,
+  `airport_city` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `airport`
+--
+
+INSERT INTO `airport` (`airport_name`, `airport_city`) VALUES
+('JFK', 'NYC'),
+('LHR', 'London'),
+('PVG', 'Shanghai'),
+('SJJ', 'Sarajevo');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `booking_agent`
+--
+
+CREATE TABLE `booking_agent` (
+  `email` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `booking_agent_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `booking_agent`
+--
+
+INSERT INTO `booking_agent` (`email`, `password`, `booking_agent_id`) VALUES
+('agent@booking.com', 'password', 8756),
+('booking@staff', '5f4dcc3b5aa765d61d8327deb882cf99', 12324),
+('bookingagent1@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', 23453),
+('eeeeee', '5f4dcc3b5aa765d61d8327deb882cf99', 23453),
+('rewrr', '5f4dcc3b5aa765d61d8327deb882cf99', 23453);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer`
+--
+
+CREATE TABLE `customer` (
+  `email` varchar(50) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `building_number` varchar(30) NOT NULL,
+  `street` varchar(30) NOT NULL,
+  `city` varchar(30) NOT NULL,
+  `state` varchar(30) NOT NULL,
+  `phone_number` bigint(20) DEFAULT NULL,
+  `passport_number` varchar(30) NOT NULL,
+  `passport_expiration` date NOT NULL,
+  `passport_country` varchar(50) NOT NULL,
+  `date_of_birth` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`email`, `name`, `password`, `building_number`, `street`, `city`, `state`, `phone_number`, `passport_number`, `passport_expiration`, `passport_country`, `date_of_birth`) VALUES
+('ben_ol87@gmail.com', 'Ben older', 'benisbest', '2', 'Ben street', 'NYC', 'NY', 917654682, '558745', '1998-10-02', 'USA', '1970-10-01'),
+('bestcus', 'cus spider', '5f4dcc3b5aa765d61d8327deb882cf99', '2A', 'penn st', 'nyc', 'NY', 9175176829, '146', '2020-12-10', 'Spain', '2020-12-19'),
+('hithere', '4et4', '5f4dcc3b5aa765d61d8327deb882cf99', '33', 'hefef', 'fsefesf', 'grgd', 8888888, '8888888', '2020-12-04', 'Spain', '2020-12-09'),
+('qwety@gmail.com', 'q', '5f4dcc3b5aa765d61d8327deb882cf99', '23', '1410 Prospect Place apt 2c', 'Brooklyn', 'New York', 9175176777, '7242345', '2020-12-03', 'Spain', '2020-12-19'),
+('Simonsays@gmail.com', 'Simon bell', 'Simonring', '32', 'mon road', 'London', 'Middlesex', 7893231, '324344', '2012-08-02', 'UK', '1984-12-08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `flight`
+--
+
+CREATE TABLE `flight` (
+  `airline_name` varchar(50) NOT NULL,
+  `flight_num` int(11) NOT NULL,
+  `departure_airport` varchar(50) NOT NULL,
+  `departure_time` datetime NOT NULL,
+  `arrival_airport` varchar(50) NOT NULL,
+  `arrival_time` datetime NOT NULL,
+  `price` decimal(10,0) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `airplane_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `flight`
+--
+
+INSERT INTO `flight` (`airline_name`, `flight_num`, `departure_airport`, `departure_time`, `arrival_airport`, `arrival_time`, `price`, `status`, `airplane_id`) VALUES
+('China Eastern', 11, 'PVG', '2020-12-02 11:39:09', 'JFK', '2020-12-03 11:39:13', '11011', 'upcoming', 3333),
+('China Eastern', 89, 'LHR', '2020-12-13 11:32:10', 'SJJ', '2020-12-14 11:32:15', '200', 'upcoming', 1000),
+('China Eastern', 211, 'JFK', '2020-12-16 07:00:00', 'PVG', '2020-12-17 12:05:00', '500', 'upcoming', 9837),
+('China Eastern', 332, 'LHR', '2020-12-05 11:34:55', 'SJJ', '2020-12-06 11:35:01', '888', 'upcoming', 4444),
+('China Eastern', 333, 'LHR', '2020-12-05 11:34:55', 'SJJ', '2020-12-06 11:35:01', '4444', 'upcoming', 231),
+('China Eastern', 335, 'LHR', '2020-12-05 11:34:55', 'SJJ', '2020-12-06 11:35:01', '4444', 'upcoming', 231),
+('China Eastern', 666, 'LHR', '2020-12-06 11:33:28', 'PVG', '2020-12-08 11:33:32', '10000', 'upcoming', 1253),
+('China Eastern', 899, 'LHR', '2020-12-25 22:00:00', 'SJJ', '2020-12-26 14:10:00', '450', 'upcoming', 1000),
+('China Eastern', 23435, 'JFK', '2020-12-02 11:00:00', 'PVG', '2020-12-03 14:25:00', '100', 'delayed', 1253),
+('China Eastern', 23452, 'PVG', '2020-12-22 12:00:00', 'JFK', '2020-12-22 17:45:00', '800', 'upcoming', 1253),
+('China Eastern', 53423, 'JFK', '2020-12-05 07:00:00', 'PVG', '2020-12-05 12:05:00', '500', 'in-progress', 9837);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `purchases`
+--
+
+CREATE TABLE `purchases` (
+  `ticket_id` int(11) NOT NULL,
+  `customer_email` varchar(50) NOT NULL,
+  `booking_agent_id` int(11) DEFAULT NULL,
+  `purchase_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `purchases`
+--
+
+INSERT INTO `purchases` (`ticket_id`, `customer_email`, `booking_agent_id`, `purchase_date`) VALUES
+(23452, 'bestcus', 8756, '2020-03-10'),
+(23452, 'qwety@gmail.com', NULL, '2020-12-06'),
+(53423, 'ben_ol87@gmail.com', NULL, '2020-03-10'),
+(53423, 'bestcus', NULL, '2020-12-09'),
+(53423, 'qwety@gmail.com', NULL, '2020-12-06'),
+(57384, 'simonsays@gmail.com', 12324, '2020-03-10'),
+(67676, 'ben_ol87@gmail.com', 23453, '2020-12-14'),
+(67676, 'bestcus', NULL, '2020-12-06'),
+(67676, 'hithere', 12324, '2020-12-09'),
+(67676, 'qwety@gmail.com', NULL, '2020-12-06'),
+(67676, 'simonsays@gmail.com', 12324, '2020-12-09');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ticket`
+--
+
+CREATE TABLE `ticket` (
+  `ticket_id` int(11) NOT NULL,
+  `airline_name` varchar(50) NOT NULL,
+  `flight_num` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `ticket`
+--
+
+INSERT INTO `ticket` (`ticket_id`, `airline_name`, `flight_num`) VALUES
+(67676, 'China Eastern', 211),
+(23452, 'China Eastern', 23435),
+(57384, 'China Eastern', 23452),
+(53423, 'China Eastern', 53423);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE `user` (
+  `username` varchar(50) NOT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  `account_type` varchar(15) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`username`, `password`, `account_type`) VALUES
+('allmydata.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('bartycrease@sweaty.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('best', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('bestcus', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('beststaff', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('booking@staff', '5f4dcc3b5aa765d61d8327deb882cf99', 'booking_agent'),
+('bookingagent1@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'booking_agent'),
+('def', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('demar@derozan.com', 'password', 'booking_agent'),
+('eeeeee', '5f4dcc3b5aa765d61d8327deb882cf99', 'booking_agent'),
+('employeeofmoth', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('ergerg', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('ergwef', '5f4dcc3b5aa765d61d8327deb882cf99', 'booking_agent'),
+('getmehome@comminghome.com', 'password', 'customer'),
+('gsffew', '618c90bbd0a41326c3dc90b34b19a23f', 'customer'),
+('hashedpass@has', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('new3', '1a1dc91c907325c69271ddf0c944bc72', 'customer'),
+('newcus2', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('newnew@new.com', 'password', 'customer'),
+('num1customer@gustomer.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('oac240@nyu.edu', 'password', NULL),
+('oac240@nyuewfwef.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('oac240@qwe.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('oac2fewfew40@nyu.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('oac420@nyu.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'booking_agent'),
+('olichen@outlook.com', 'pooooo', 'customer'),
+('qwety@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('rewrr', '5f4dcc3b5aa765d61d8327deb882cf99', 'booking_agent'),
+('rwner', 'c92dd017e3decd6603e8e7ba9aedb732', 'airline_staff'),
+('scaccac', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('simonsays@hotmail.com', 'password', 'customer'),
+('staff1', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('staff2', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('staffer', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('ta best', '5f4dcc3b5aa765d61d8327deb882cf99', 'customer'),
+('tempura@isnice.com', 'password', 'customer'),
+('tretter', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff'),
+('WORLDSFINIESTSTAFF', '5f4dcc3b5aa765d61d8327deb882cf99', 'airline_staff');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `airline`
+--
+ALTER TABLE `airline`
+  ADD PRIMARY KEY (`airline_name`);
+
+--
+-- Indexes for table `airline_staff`
+--
+ALTER TABLE `airline_staff`
+  ADD PRIMARY KEY (`username`),
+  ADD KEY `airline_name` (`airline_name`);
+
+--
+-- Indexes for table `airplane`
+--
+ALTER TABLE `airplane`
+  ADD PRIMARY KEY (`airline_name`,`airplane_id`);
+
+--
+-- Indexes for table `airport`
+--
+ALTER TABLE `airport`
+  ADD PRIMARY KEY (`airport_name`);
+
+--
+-- Indexes for table `booking_agent`
+--
+ALTER TABLE `booking_agent`
+  ADD PRIMARY KEY (`email`);
+
+--
+-- Indexes for table `customer`
+--
+ALTER TABLE `customer`
+  ADD PRIMARY KEY (`email`);
+
+--
+-- Indexes for table `flight`
+--
+ALTER TABLE `flight`
+  ADD PRIMARY KEY (`airline_name`,`flight_num`),
+  ADD KEY `airline_name` (`airline_name`,`airplane_id`),
+  ADD KEY `departure_airport` (`departure_airport`),
+  ADD KEY `arrival_airport` (`arrival_airport`);
+
+--
+-- Indexes for table `purchases`
+--
+ALTER TABLE `purchases`
+  ADD PRIMARY KEY (`ticket_id`,`customer_email`),
+  ADD KEY `customer_email` (`customer_email`);
+
+--
+-- Indexes for table `ticket`
+--
+ALTER TABLE `ticket`
+  ADD PRIMARY KEY (`ticket_id`),
+  ADD KEY `airline_name` (`airline_name`,`flight_num`);
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `airline_staff`
+--
+ALTER TABLE `airline_staff`
+  ADD CONSTRAINT `airline_staff_ibfk_1` FOREIGN KEY (`airline_name`) REFERENCES `airline` (`airline_name`);
+
+--
+-- Constraints for table `airplane`
+--
+ALTER TABLE `airplane`
+  ADD CONSTRAINT `airplane_ibfk_1` FOREIGN KEY (`airline_name`) REFERENCES `airline` (`airline_name`);
+
+--
+-- Constraints for table `flight`
+--
+ALTER TABLE `flight`
+  ADD CONSTRAINT `flight_ibfk_1` FOREIGN KEY (`airline_name`,`airplane_id`) REFERENCES `airplane` (`airline_name`, `airplane_id`),
+  ADD CONSTRAINT `flight_ibfk_2` FOREIGN KEY (`departure_airport`) REFERENCES `airport` (`airport_name`),
+  ADD CONSTRAINT `flight_ibfk_3` FOREIGN KEY (`arrival_airport`) REFERENCES `airport` (`airport_name`);
+
+--
+-- Constraints for table `purchases`
+--
+ALTER TABLE `purchases`
+  ADD CONSTRAINT `purchases_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `ticket` (`ticket_id`),
+  ADD CONSTRAINT `purchases_ibfk_2` FOREIGN KEY (`customer_email`) REFERENCES `customer` (`email`);
+
+--
+-- Constraints for table `ticket`
+--
+ALTER TABLE `ticket`
+  ADD CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`airline_name`,`flight_num`) REFERENCES `flight` (`airline_name`, `flight_num`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

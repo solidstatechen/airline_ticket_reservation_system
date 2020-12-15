@@ -134,3 +134,15 @@ CREATE TABLE `purchases` (
   FOREIGN KEY(`ticket_id`) REFERENCES `ticket`(`ticket_id`),
   FOREIGN KEY(`customer_email`) REFERENCES `customer`(`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE `user` (
+  `username` varchar(50) NOT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  `account_type` varchar(15) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
