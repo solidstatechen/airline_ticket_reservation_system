@@ -1089,7 +1089,7 @@ def comparison_revenue_last_month():
 
 @app.route('/logout')
 def logout():
-    
+    session.pop('username')
     return redirect('/')
         
 app.secret_key = 'some key that you will never guess'
