@@ -3,7 +3,7 @@
 </head>
 <body>
 
-<h3>Welcome {{account_type}} - {{username}}</h3>
+<h3>All customers of flight {{flight_num}} </h3>
 <!--
 <form action="/post" method="POST">
 	<h1>Welcome {{username}}</h1>
@@ -17,24 +17,12 @@
 	}
 </style>
 
-<h3>Upcoming Flights in next 30 days</h3>
+<h3>Customers</h3>
 <table>
-	<th>Airline</th>
-	<th>Flight Num</th>
-	<th>Deptarture Airport</th>
-	<th>Deptarture Time</th>
-	<th>Arrival Airport</th>
-	<th>Arrival Time</th>
-	<th>Status</th>
-{% for line in flights %}
+	<th>Customer email</th>
+{% for line in customers %}
 	<tr>
 		<td>{{line[0]}}</td>
-		<td>{{line[1]}}</td>
-		<td>{{line[2]}}</td>
-		<td>{{line[3]}}</td>
-		<td>{{line[4]}}</td>
-		<td>{{line[5]}}</td>
-		<td>{{line[7]}}</td>
 	</tr>
 {% endfor %}
 </table>
@@ -49,16 +37,11 @@
 	<label> <for="max_date">Max Date:</label>
 	<input type="date" name = 'max_date' placeholder="latest date" value=''>
 	<input type="submit" value = Search />
-
+</br>
 </br><a href="/create_new_flight">Create new flight</a></br>
 <a href="/create_new_airport">Create new airport</a></br>
 <a href="/create_new_airplane">Create new airplane</a></br>
-<a href="view_report">View Report</a></br>
-<a href="view_top_destination">View top destinations</a></br>
-<a href="comparison_revenue">Comparison of revenue earned</a></br>
-<a href='/top_agents'>View Top Agents</a></br>
-<a href="/top_buyers">View Top Customers</a></br>
-
+<a href='/home'>Home</a></br>
 <a href="/logout">Logout</a></br>
 
 </body>

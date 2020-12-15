@@ -1,0 +1,39 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>Top Customers for {{airline_name}} </h3>
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<h3>Top Customers over past year</h3>
+<table>
+	<th>Name</th>
+	<th>Email</th>
+	<th>Number of tickets bought</th>
+	<th>View all flights</th>
+{% for line in customers %}
+	<tr>
+		<form action="/all_customer_flights" method="POST">
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}</td>
+		<input type="hidden" name="customer_email" value ={{line[1]}}>
+		<td>{{line[2]}}</td>
+		<td><input type="submit" value ="View"/></td>
+	</form>
+	</tr>
+{% endfor %}
+</table>
+
+
+<a href='/home'>Home</a></br>
+<a href="/logout">Logout</a></br>
+
+</body>
+
+
+</html>

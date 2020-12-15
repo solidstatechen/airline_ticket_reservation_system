@@ -1,0 +1,37 @@
+<html>
+<head>	
+</head>
+<body>
+
+<h2>Chart of purchases with booking agent</h2>
+
+<div><canvas id="myChart" width="400" height="400"></canvas></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+<script>
+
+new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
+    data: {
+      labels: ["Revenue"],
+      datasets: [{
+        label: "Population (millions)",
+        backgroundColor: ["#3e95cd"],
+        data: {{ data|safe }}
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Predicted world population (millions) in 2050'
+      }
+    }
+});
+
+
+</script>
+<a href="/comparison_revenue">Go back</a>
+
+</body>
+
+
+</html>

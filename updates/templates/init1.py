@@ -15,7 +15,6 @@ app = Flask(__name__)
 conn = mysql.connector.connect(host='localhost',
                        user='root',
                        password='',
-                       port = 3307,
                        database='airline_reservation')
 
 
@@ -679,8 +678,6 @@ def top_customers_money():
 
     return render_template('top_customers_money.html', most_money =most_money, da = six_months_ago, ee= json.dumps(e), vv= json.dumps(v))
 
-
-
 @app.route('/staff_search', methods=['GET', 'POST'])
 def staff_search():
     departure_airport = request.form['dept_airport']
@@ -864,154 +861,9 @@ def all_customer_flights():
 
     return render_template('customer_flights.html', flights= flights, customer_email = customer_email)
 
-
-@app.route('/view_report', methods=['GET', 'POST'])
-def view_report():
-    default_range = 12 - 1 
-    months_list = []
-
-    #makes a list of the last 6 months 
-    for i in range(default_range, -1, -1):
-        curr_month = (datetime.now() - relativedelta(months=i)).strftime('%Y-%m-01')
-        months_list.append(curr_month)
-
-    
-    cursor = conn.cursor()
-    query1 = "SELECT DATE_FORMAT(purchase_date, '%Y-%m-01'), Count(t.ticket_id) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id GROUP BY month(purchase_date)"
-    cursor.execute(query1)
-    data1 = cursor.fetchall()
-    cursor.close()
-    
-
-    monthly_data = data1
-
-    monthly_spending_list = []
-    
-    for j in range(len(months_list)):
-        monthly_spending_list.append(0)
-        for item in monthly_data:
-            #check if dates match up
-            if months_list[j] == item[0]:
-                error = 'MATCH'
-                monthly_spending_list[j] = int(item[1])
-    
-
-    return render_template('view_report.html',  data=data1, ff=monthly_spending_list, month = months_list)
-
-
-@app.route('/search_report', methods=['GET', 'POST'])
-def search_report():
-    username = session["username"]
-    min_date = request.form['min_date']
-    max_date = request.form['max_date']
-
-    min_datetime_object = datetime.strptime(min_date, '%Y-%m-%d')
-    max_datetime_object = datetime.strptime(max_date, '%Y-%m-%d')
-
-    num_months = (max_datetime_object.year - min_datetime_object.year) * 12 + (max_datetime_object.month - min_datetime_object.month)
-    #line below needed as num_months is one short 
-    num_months += 1
-
-
-    desired_range = num_months - 1 
-    months_list = []
-
-    #makes a list of the last of months between range
-    for i in range(desired_range, -1, -1):
-        curr_month = (max_datetime_object - relativedelta(months=i)).strftime('%Y-%m-01')
-        months_list.append(curr_month)
-
-    cursor = conn.cursor()
-    query1 = "SELECT DATE_FORMAT(purchase_date, '%Y-%m-01'), Count(t.ticket_id) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE p.purchase_date >= \'{}\' AND p.purchase_date <= \'{}\' GROUP BY month(purchase_date)"
-    cursor.execute(query1.format(min_datetime_object,max_datetime_object))
-    data1 = cursor.fetchall()
-    cursor.close()
-
-    monthly_data = data1
-    monthly_spending_list = []
-
-
-    for j in range(len(months_list)):
-        monthly_spending_list.append(0)
-        for item in monthly_data:
-            #check if dates match up
-            if months_list[j] == item[0]:
-                error = 'MATCH'
-                monthly_spending_list[j] = int(item[1])
-    
-    
-    return render_template('search_report_results.html', data=monthly_spending_list, months=months_list)
-
-
-@app.route('/view_top_destination', methods=['GET', 'POST'])
-def view_top_destination():
-    three_month_ago = (datetime.now() - relativedelta(months=3)).strftime('%Y-%m-01')
-    cursor = conn.cursor()
-    query1 = "SELECT arrival_airport, COUNT(t.ticket_id) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id AND p.purchase_date >= \'{}\' GROUP BY arrival_airport ORDER BY COUNT(t.ticket_id) desc LIMIT 3"
-    cursor.execute(query1.format(three_month_ago))
-    data1 = cursor.fetchall()
-    cursor.close()
-
-    xx = []
-    yy = []
-
-    for i in data1:
-        xx.append(i[0])
-        yy.append(i[1])
-
-    return render_template('top_destination.html' ,data=xx, data2=yy)
-
-
-@app.route('/top_year_des', methods=['GET', 'POST'])
-def top_year_des():
-    three_month_ago = (datetime.now() - relativedelta(months=12)).strftime('%Y-%m-01')
-    cursor = conn.cursor()
-    query1 = "SELECT arrival_airport, COUNT(t.ticket_id) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id AND p.purchase_date >= \'{}\' GROUP BY arrival_airport ORDER BY COUNT(t.ticket_id) desc LIMIT 3"
-    cursor.execute(query1.format(three_month_ago))
-    data1 = cursor.fetchall()
-    cursor.close()
-
-    xx = []
-    yy = []
-
-    for i in data1:
-        xx.append(i[0])
-        yy.append(i[1])
-
-    return render_template('top_year.html' ,data=xx, data2=yy)
-        
-
-
-@app.route('/comparison_revenue', methods=['GET', 'POST'])
-def comparison_revenue():
-    
-    
-    cursor = conn.cursor()
-    query1 = "SELECT SUM(price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE booking_agent_id IS NULL"
-    cursor.execute(query1)
-    data1 = cursor.fetchall()
-    cursor.close()
-
-    revenue = []
-    revenue.append(int(data1[0][0]))
-
-    cursor = conn.cursor()
-    query2 = "SELECT SUM(price) FROM flight f JOIN ticket t ON f.flight_num = t.flight_num JOIN purchases p ON t.ticket_id = p.ticket_id WHERE booking_agent_id IS NOT NULL"
-    cursor.execute(query2)
-    data2 = cursor.fetchall()
-    cursor.close()
-
-    revenue_with_booking = int(data2[0][0])
-    revenue.append(revenue_with_booking)
-
-    return render_template('chart_no_booking_agent.html', data=revenue)
-
-
-
-
 @app.route('/logout')
 def logout():
-    
+    session.pop('username')
     return redirect('/')
         
 app.secret_key = 'some key that you will never guess'

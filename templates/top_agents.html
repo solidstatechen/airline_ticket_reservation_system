@@ -1,0 +1,59 @@
+<html>
+<head>
+</head>
+<body>
+
+<h3>Top Booking Agents </h3>
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<h3>Top 5 by # of Sales for past month</h3>
+<table>
+	<th>Booking Agent ID</th>
+	<th>Tickets Sold</th>
+{% for line in top_month %}
+	<tr>
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}
+	</tr>
+{% endfor %}
+</table>
+
+
+</br>
+</br>
+<h3>Top 5 by # of Sales for past year</h3>
+<table>
+	<th>Booking Agent ID</th>
+	<th>Tickets Sold</th>
+{% for line in top_year%}
+	<tr>
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}
+	</tr>
+{% endfor %}
+</table>
+</br>
+</br>
+<h3>Top 5 by commission for past year</h3>
+<table>
+	<th>Booking Agent ID</th>
+	<th>Commission</th>
+{% for line in top_commission%}
+	<tr>
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}
+	</tr>
+{% endfor %}
+
+</table>
+<a href='/home'>Home</a></br>
+<a href="/logout">Logout</a></br>
+
+</body>
+
+
+</html>

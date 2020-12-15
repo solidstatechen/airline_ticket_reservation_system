@@ -1,0 +1,37 @@
+<html>
+<head>	
+</head>
+<body>
+
+
+<div><canvas id="pie-chart" width="600" height="200"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+<script>
+
+new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
+    data: {
+      labels: ["Revenue without booking agent", "Revenue with booking agent"],
+      datasets: [{
+        label: "$",
+        backgroundColor: ["#3e95cd","#8e5ea2"],
+        data: {{ data|safe }}
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Chart of purchases without a booking agent'
+      }
+    }
+});
+
+
+</script>
+
+<a href="/home">Go back</a>
+
+</body>
+
+
+</html>
